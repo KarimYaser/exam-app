@@ -1,0 +1,268 @@
+{
+  "status": true,
+  "code": 200,
+  "payload": {
+    "questions": [
+      {
+        "id": "4c9e55a0-bc9c-43ed-9c1a-98b28f6d4e2b",
+        "text": "What is a container in cloud computing?",
+        "examId": "49d60279-fa06-431b-ac77-409ab06378be",
+        "immutable": false,
+        "createdAt": "2026-03-27T01:13:15.410Z",
+        "updatedAt": "2026-03-27T01:13:15.410Z",
+        "answers": [
+          {
+            "id": "66f48c86-c521-4120-9d26-14bae4afdae9",
+            "text": "A type of firewall"
+          },
+          {
+            "id": "7b2bdccd-8ab7-4e3d-bba8-5ff43746bee2",
+            "text": "A physical server rack"
+          },
+          {
+            "id": "96e748ee-89f0-4df0-9b32-1b811101727a",
+            "text": "A lightweight, portable unit that packages an application and its dependencies"
+          },
+          {
+            "id": "d7f9d75d-cc09-477a-91e5-d1bbc98a8a39",
+            "text": "A virtual machine with a full OS"
+          }
+        ]
+      },
+      {
+        "id": "0df8b56e-522d-4990-965e-c9dc5b25b726",
+        "text": "Which tool is most commonly used for containerization?",
+        "examId": "49d60279-fa06-431b-ac77-409ab06378be",
+        "immutable": false,
+        "createdAt": "2026-03-27T01:13:15.412Z",
+        "updatedAt": "2026-03-27T01:13:15.412Z",
+        "answers": [
+          {
+            "id": "69359a2c-7476-49c9-bcf3-e7023ba27791",
+            "text": "AWS S3"
+          },
+          {
+            "id": "f0b986bd-3f37-48c9-a2b2-ec8f2e651607",
+            "text": "Docker"
+          },
+          {
+            "id": "fdd4e9d9-11ac-43d9-a5e4-0042c5fb52ab",
+            "text": "Terraform"
+          },
+          {
+            "id": "4749017f-9fca-453d-be73-b15fa97d1bf3",
+            "text": "Kubernetes Dashboard"
+          }
+        ]
+      },
+      {
+        "id": "a4b62451-b2f4-42f8-b12e-955f555cf54e",
+        "text": "What is the purpose of a Dockerfile?",
+        "examId": "49d60279-fa06-431b-ac77-409ab06378be",
+        "immutable": false,
+        "createdAt": "2026-03-27T01:13:15.414Z",
+        "updatedAt": "2026-03-27T01:13:15.414Z",
+        "answers": [
+          {
+            "id": "3b9ece7e-c909-43bd-95f2-4f87142d4ef0",
+            "text": "Stores encrypted passwords"
+          },
+          {
+            "id": "e3d8f647-0dc9-407d-8503-8e0bde5ba8ef",
+            "text": "Defines the steps to build a Docker container image"
+          },
+          {
+            "id": "5a32e118-7cd9-401c-b192-3ecf3d6e3857",
+            "text": "Manages cloud storage buckets"
+          },
+          {
+            "id": "4dbb7f4a-fe31-4103-803d-630522ba1dc4",
+            "text": "Configures firewalls"
+          }
+        ]
+      },
+      {
+        "id": "eeca03a2-f01a-46a3-b60a-6eb1fbbda927",
+        "text": "What is Docker Hub used for?",
+        "examId": "49d60279-fa06-431b-ac77-409ab06378be",
+        "immutable": false,
+        "createdAt": "2026-03-27T01:13:15.415Z",
+        "updatedAt": "2026-03-27T01:13:15.415Z",
+        "answers": [
+          {
+            "id": "aa611836-c3e7-430d-9cf3-faad29300e98",
+            "text": "A repository for sharing and storing Docker images"
+          },
+          {
+            "id": "981dd714-a334-475a-a07b-218adc13d176",
+            "text": "A CI/CD pipeline service"
+          },
+          {
+            "id": "21a05696-19fd-4a87-a862-21a40258819f",
+            "text": "A tool for monitoring network traffic"
+          },
+          {
+            "id": "0dd44c46-58b2-4fa3-8c23-107c1092faa7",
+            "text": "Local file backup"
+          }
+        ]
+      },
+      {
+        "id": "d369d141-715e-4e5e-b3a9-613cdc457139",
+        "text": "What is the difference between a container and a virtual machine?",
+        "examId": "49d60279-fa06-431b-ac77-409ab06378be",
+        "immutable": false,
+        "createdAt": "2026-03-27T01:13:15.418Z",
+        "updatedAt": "2026-03-27T01:13:15.418Z",
+        "answers": [
+          {
+            "id": "c81fc35d-0e18-471b-9dc2-6ee53da6fa0c",
+            "text": "Containers cannot run apps; VMs run only apps"
+          },
+          {
+            "id": "663d04a3-7045-41f0-89ab-066720a22420",
+            "text": "VMs are portable; containers cannot run on multiple environments"
+          },
+          {
+            "id": "5a3c9297-fbd1-4752-90ba-19d2cfe54c8e",
+            "text": "Containers require physical servers; VMs are cloud-based"
+          },
+          {
+            "id": "36057b64-0dc5-4f65-996a-0c222c77e824",
+            "text": "Containers share the host OS and are lightweight; VMs have full OS and more overhead"
+          }
+        ]
+      },
+      {
+        "id": "ccf0f834-0bfe-4b51-8c3e-51f9533d7216",
+        "text": "Which command is used to list running Docker containers?",
+        "examId": "49d60279-fa06-431b-ac77-409ab06378be",
+        "immutable": false,
+        "createdAt": "2026-03-27T01:13:15.419Z",
+        "updatedAt": "2026-03-27T01:13:15.419Z",
+        "answers": [
+          {
+            "id": "a744c8fd-f2c6-440f-8d0d-1ce631899b0e",
+            "text": "docker build"
+          },
+          {
+            "id": "9b3c0472-c407-4642-814c-08df66fc7973",
+            "text": "docker stop"
+          },
+          {
+            "id": "757e43bc-30af-444f-a616-39e4a27d83a0",
+            "text": "docker run"
+          },
+          {
+            "id": "3cd88d87-ff1d-4e41-9ee3-b11e7d4c0a57",
+            "text": "docker ps"
+          }
+        ]
+      },
+      {
+        "id": "60594c38-1b20-46be-9bec-e60519b7763b",
+        "text": "What is a Docker volume?",
+        "examId": "49d60279-fa06-431b-ac77-409ab06378be",
+        "immutable": false,
+        "createdAt": "2026-03-27T01:13:15.423Z",
+        "updatedAt": "2026-03-27T01:13:15.423Z",
+        "answers": [
+          {
+            "id": "a8c1aae9-fedb-42bc-88cf-7bce7b4c4a38",
+            "text": "Persistent storage that containers can share and use"
+          },
+          {
+            "id": "ec627dda-99fe-4ab0-94fc-7c45c3b9cafd",
+            "text": "A backup of the Docker host"
+          },
+          {
+            "id": "b8aef75a-148a-4abf-821a-63003547c29f",
+            "text": "A temporary container log file"
+          },
+          {
+            "id": "87bea98a-28d5-476b-aa64-a3fb4ce59c92",
+            "text": "A network configuration"
+          }
+        ]
+      },
+      {
+        "id": "94015f5a-b1f0-4a22-844c-60b6074d7212",
+        "text": "What is container orchestration?",
+        "examId": "49d60279-fa06-431b-ac77-409ab06378be",
+        "immutable": false,
+        "createdAt": "2026-03-27T01:13:15.428Z",
+        "updatedAt": "2026-03-27T01:13:15.428Z",
+        "answers": [
+          {
+            "id": "cdde8e14-03b2-4156-b2dc-9da64b0aadf0",
+            "text": "Installing virtual machines"
+          },
+          {
+            "id": "ccbee252-68af-48ac-81ba-9a989f0e2bc3",
+            "text": "Encrypting container data"
+          },
+          {
+            "id": "60fa967f-c0d6-42f8-97d4-2c8f677a6d4d",
+            "text": "Manual configuration of Dockerfiles"
+          },
+          {
+            "id": "0e4cdb97-3b11-494b-88d6-0bdb3d9d9ead",
+            "text": "Managing and automating deployment, scaling, and networking of containers"
+          }
+        ]
+      },
+      {
+        "id": "0e77a339-0c07-4aae-964b-b9bf790d8c54",
+        "text": "Which platform is commonly used for container orchestration?",
+        "examId": "49d60279-fa06-431b-ac77-409ab06378be",
+        "immutable": false,
+        "createdAt": "2026-03-27T01:13:15.431Z",
+        "updatedAt": "2026-03-27T01:13:15.431Z",
+        "answers": [
+          {
+            "id": "1b41cbe5-a693-4c2f-bdac-b6ce52856a95",
+            "text": "AWS Lambda"
+          },
+          {
+            "id": "1c25db82-8264-43e1-92b1-d70b581433dd",
+            "text": "GitHub"
+          },
+          {
+            "id": "1ce6dc99-e93a-4db4-87a1-cbbeefe87d3d",
+            "text": "Kubernetes"
+          },
+          {
+            "id": "72b44788-eaf1-4f5c-a0cb-26da851a279c",
+            "text": "VMware Workstation"
+          }
+        ]
+      },
+      {
+        "id": "bcf88ff7-8c86-4257-a4ee-34d915fe0dee",
+        "text": "Why are containers important in cloud computing?",
+        "examId": "49d60279-fa06-431b-ac77-409ab06378be",
+        "immutable": false,
+        "createdAt": "2026-03-27T01:13:15.438Z",
+        "updatedAt": "2026-03-27T01:13:15.438Z",
+        "answers": [
+          {
+            "id": "9d2f2315-5b79-4f84-a5dc-1e8d26797a74",
+            "text": "They provide portability, efficiency, and consistent environments across platforms"
+          },
+          {
+            "id": "a3e9d0e2-5cc0-4881-b0fd-41d9ea9d34cd",
+            "text": "They reduce software testing"
+          },
+          {
+            "id": "c211e04d-a9c1-40e9-8800-5726402ebb68",
+            "text": "They store backups automatically"
+          },
+          {
+            "id": "03df28ee-a2a6-4854-8cd3-5f3f5bab9c33",
+            "text": "They replace the need for cloud security"
+          }
+        ]
+      }
+    ]
+  }
+}

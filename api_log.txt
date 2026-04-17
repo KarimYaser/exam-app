@@ -1,0 +1,5 @@
+
+[2026-04-16T03:02:13.077Z] GET /api/diplomas?page=1&limit=9 -> SUCCESS
+[2026-04-16T03:03:10.879Z] GET /api/diplomas?page=1&limit=9 -> SUCCESS
+[2026-04-16T03:09:19.219Z] GET /api/diplomas?page=1&limit=6 -> ERROR: Failed to fetch diplomas
+[2026-04-16T03:09:30.064Z] GET /api/diplomas?page=1&limit=9 -> SUCCESS
