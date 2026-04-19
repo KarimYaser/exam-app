@@ -21,6 +21,35 @@ declare interface ISuccessResponse<T> {
   payload?: T;
 }
 
+/** Body shape for `POST /auth/login` success payload */
+interface ILoginPayload {
+  user: IUser;
+  token: string;
+}
+
+async function fetchUserProfile(bearerToken: string): Promise<IUser | null> {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/users/profile`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${bearerToken}`,
+      },
+      cache: "no-store",
+    },
+  );
+  if (!res.ok) {
+    return null;
+  }
+  const data: IApiResponse<ISuccessResponse<{ user: IUser }>> =
+    await res.json();
+  if (!data.status || !data.payload?.user) {
+    return null;
+  }
+  return data.payload.user;
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     Credentials({

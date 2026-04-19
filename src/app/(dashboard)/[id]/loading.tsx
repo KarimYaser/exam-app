@@ -1,8 +1,15 @@
+import isAdmin from "@/lib/util/is-admin";
 import ExamCardSkeleton from "./_components/exam-card-skeleton";
+import AdminDiplomaDetailsSkeleton from "./_components/admin/admin-diploma-details-skeleton";
 
-export default function Loading() {
+export default async function Loading() {
+  const isAdminUser = await isAdmin();
   return (
-    <div className="w-full flex-1 p-6 md:p-8 overflow-y-auto">
+    isAdminUser ? (
+      <AdminDiplomaDetailsSkeleton />
+    ):(
+      
+        <div className="w-full flex-1 p-6 md:p-8 overflow-y-auto">
       <div className="max-w-7xl mx-auto">
         <div className="h-8 bg-gray-200 animate-pulse rounded w-48 mb-8 border-b pb-4"></div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -15,5 +22,7 @@ export default function Loading() {
         </div>
       </div>
     </div>
+      
+    )
   );
 }

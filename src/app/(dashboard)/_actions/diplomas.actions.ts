@@ -1,6 +1,7 @@
 "use server";
 
 import { getNextAuthToken } from "@/lib/util/auth.util";
+import { revalidateTag } from "next/cache";
 
 export interface Diploma {
   id: string;
@@ -27,13 +28,21 @@ export interface DiplomasResponse {
   payload: DiplomasPayload;
 }
 
-/**
- * Fetches the paginated list of diplomas from the API.
- *
- * @param page The page number to fetch (default: 1)
- * @param limit The number of items per page (default: 20)
- * @returns A promise resolving to the DiplomasResponse object containing data and pagination info.
- */
+export interface CreateDiplomaInput {
+  title: string;
+  description: string;
+  image: string;
+}
+
+export interface CreateDiplomaResponse {
+  status: boolean;
+  code: number;
+  message: string;
+  payload: {
+    diploma: Diploma;
+  };
+}
+
 export async function getDiplomas(
   page: number = 1,
   limit: number = 20,
@@ -61,6 +70,36 @@ export async function getDiplomas(
     return payload;
   } catch (error) {
     // console.log("Failed to fetch diplomas:", error);
+    throw error;
+  }
+}
+
+export async function createDiploma(
+  values: CreateDiplomaInput,
+): Promise<CreateDiplomaResponse> {
+  const jwt = await getNextAuthToken();
+  const token = jwt?.token;
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  try {
+    const response = await fetch(`${baseUrl}/diplomas`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(values),
+    });
+
+    const payload = (await response.json()) as CreateDiplomaResponse;
+
+    if (!response.ok) {
+      throw new Error(payload?.message || "Failed to create diploma");
+    }
+
+    revalidateTag("diplomas");
+    return payload;
+  } catch (error) {
     throw error;
   }
 }

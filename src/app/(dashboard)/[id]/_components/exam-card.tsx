@@ -4,16 +4,14 @@ import Image from "next/image";
 import { ExamCardProps } from "../_types/exam";
 
 
-
-
 export default function ExamCard({ exam, diplomaId }: ExamCardProps) {
   return (
     <div className="flex flex-col md:flex-row bg-[#EFF6FF] border border-gray-100 shadow-[0_2px_4px_rgba(0,0,0,0.02)] p-4 md:p-6 gap-6 relative group transition-all duration-300 hover:shadow-md">
       {/* Left Icon Square */}
-      <div className="w-20 h-20 md:w-24 md:h-24 border border-1 border-blue-300 shrink-0 overflow-hidden bg-gray-50 border border-gray-100 shadow-sm flex items-center justify-center relative">
+      <div className="w-20 h-20 md:w-24 md:h-24 border border-blue-300 shrink-0 overflow-hidden bg-gray-50 shadow-sm flex items-center justify-center relative">
         <Image
           unoptimized
-          src={`https://exam-app.elevate-bootcamp.cloud${exam.image}`}
+          src={exam.image}
           alt={exam.title}
           fill
           className="object-cover p-2 "
@@ -32,7 +30,7 @@ export default function ExamCard({ exam, diplomaId }: ExamCardProps) {
           <div className="flex items-center gap-4 text-xs font-semibold text-gray-800 shrink-0">
             <div className="flex items-center gap-1.5">
               <HelpCircle size={14} className="text-gray-800" />
-              <span>{exam._count.questions} Questions</span>
+              <span>{exam.questionsCount} Questions</span>
             </div>
             <div className="flex items-center gap-1.5">
               <Clock size={14} className="text-gray-800" />

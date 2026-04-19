@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import elevateLogo from "../../../../public/assets/logo.png";
+import elevateLogo from "../../../../public/assets/logo2.png";
 import Image from "next/image";
 import logo from "../../../../public/assets/lucide/folder-code.svg";
 import avatar from "../../../../public/assets/user-photo.jpg";
@@ -111,10 +111,12 @@ export default function DashboardSidebar() {
         </div>
       {/* Logo */}
       <div className="flex items-start flex-col gap-2.5 px-5 py-5">
+
         <Image
           src={elevateLogo}
           alt="Logo"
-          className=" text-blue-500 bg-black"
+          className="text-black bg-black p-1"
+          
         />
 
         <div className="flex items-center gap-2.5 mt-1">
