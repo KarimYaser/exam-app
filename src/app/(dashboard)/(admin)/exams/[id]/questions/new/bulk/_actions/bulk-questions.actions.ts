@@ -49,10 +49,6 @@ export async function bulkCreateQuestions(
 
   const payload = (await response.json()) as BulkCreateQuestionsResponse;
 
-  if (!response.ok) {
-    throw new Error(payload?.message || "Failed to bulk create questions");
-  }
-
   revalidatePath(`/exams/${examId}`);
   return payload;
 }

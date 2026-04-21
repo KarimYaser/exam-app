@@ -35,7 +35,9 @@ export default function BulkAddForm({ examId, examTitle }: BulkAddFormProps) {
   const queryClient = useQueryClient();
 
   /** list of question drafts */
-  const [questions, setQuestions] = useState<QuestionDraft[]>([emptyQuestion()]);
+  const [questions, setQuestions] = useState<QuestionDraft[]>([
+    emptyQuestion(),
+  ]);
   /** index of the currently visible question tab */
   const [activeIdx, setActiveIdx] = useState(0);
 
@@ -77,9 +79,7 @@ export default function BulkAddForm({ examId, examTitle }: BulkAddFormProps) {
         { text, isCorrect: questions[qIdx]!.answers.length === 0 },
       ],
     });
-    setNewAnswerTexts((prev) =>
-      prev.map((v, i) => (i === qIdx ? "" : v)),
-    );
+    setNewAnswerTexts((prev) => prev.map((v, i) => (i === qIdx ? "" : v)));
     addInputRefs.current[qIdx]?.focus();
   };
 
@@ -87,9 +87,10 @@ export default function BulkAddForm({ examId, examTitle }: BulkAddFormProps) {
     const next = questions[qIdx]!.answers.filter((_, i) => i !== aIdx);
     // if the removed answer was correct, promote index 0
     const hadCorrect = questions[qIdx]!.answers[aIdx]?.isCorrect;
-    const fixed = hadCorrect && next.length > 0
-      ? next.map((a, i) => (i === 0 ? { ...a, isCorrect: true } : a))
-      : next;
+    const fixed =
+      hadCorrect && next.length > 0
+        ? next.map((a, i) => (i === 0 ? { ...a, isCorrect: true } : a))
+        : next;
     updateQuestion(qIdx, { answers: fixed });
   };
 
@@ -108,7 +109,8 @@ export default function BulkAddForm({ examId, examTitle }: BulkAddFormProps) {
     for (let i = 0; i < questions.length; i++) {
       const q = questions[i]!;
       if (!q.text.trim()) return `Question ${i + 1} has no text.`;
-      if (q.answers.length < 2) return `Question ${i + 1} needs at least 2 answers.`;
+      if (q.answers.length < 2)
+        return `Question ${i + 1} needs at least 2 answers.`;
       if (!q.answers.some((a) => a.isCorrect))
         return `Question ${i + 1} has no correct answer selected.`;
     }
@@ -127,7 +129,8 @@ export default function BulkAddForm({ examId, examTitle }: BulkAddFormProps) {
     },
     onSuccess: (response) => {
       toast.success(
-        response?.message || `${questions.length} question(s) created successfully`,
+        response?.message ||
+          `${questions.length} question(s) created successfully`,
         { position: "top-right" },
       );
       queryClient.invalidateQueries({ queryKey: ["admin-exams"] });
@@ -170,7 +173,9 @@ export default function BulkAddForm({ examId, examTitle }: BulkAddFormProps) {
           {examTitle}
         </span>
         <span className="text-gray-300">/</span>
-        <span className="font-semibold text-[#155DFC]">Create New Question</span>
+        <span className="font-semibold text-[#155DFC]">
+          Create New Question
+        </span>
       </div>
 
       {/* page header */}
@@ -289,7 +294,9 @@ export default function BulkAddForm({ examId, examTitle }: BulkAddFormProps) {
             <div className="border-t border-gray-200">
               {/* answers header */}
               <div className="flex items-center justify-between border-b border-gray-200 bg-gray-100 px-3 py-2">
-                <span className="text-xs font-semibold text-gray-600">Body</span>
+                <span className="text-xs font-semibold text-gray-600">
+                  Body
+                </span>
                 <button
                   type="button"
                   onClick={() => addInputRefs.current[activeIdx]?.focus()}

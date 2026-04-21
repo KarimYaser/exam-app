@@ -1,6 +1,5 @@
 import { PAGINATION_LIMIT } from "@/lib/constants/api.constant";
 import { getNextAuthToken } from "@/lib/util/auth.util";
-import isAdmin from "@/lib/util/is-admin";
 import { NextRequest, userAgent } from "next/server";
 
 export interface Diploma {
@@ -31,14 +30,13 @@ export interface DiplomasResponse {
 export async function getDiplomas(req: NextRequest): Promise<DiplomasResponse> {
   const { device } = userAgent(req);
   const viewport = device.type || "desktop";
-  const isAdminUser = await isAdmin();
- 
-  const limit = viewport === "desktop" ? 12 : 3;
+  const limit =
+    viewport === "desktop" ? 12 : viewport === "tablet" ? 6 : PAGINATION_LIMIT;
   const jwt = await getNextAuthToken();
   const token = jwt?.token;
   const page = req.nextUrl.searchParams.get("page") || 1;
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/diplomas?page=${page}&limit=${isAdminUser? 100 : limit}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/diplomas?page=${page}&limit=${limit}`,
     {
       method: "GET",
       headers: {
