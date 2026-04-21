@@ -1,7 +1,7 @@
 "use server";
 
 import { getNextAuthToken } from "@/lib/util/auth.util";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export interface Diploma {
   id: string;
@@ -41,6 +41,12 @@ export interface CreateDiplomaResponse {
   payload: {
     diploma: Diploma;
   };
+}
+
+export interface DeleteDiplomaResponse {
+  status: boolean;
+  code: number;
+  message: string;
 }
 
 export async function getDiplomas(
@@ -98,6 +104,32 @@ export async function createDiploma(
     }
 
     revalidateTag("diplomas");
+    return payload;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function deleteDiplomaById(
+  diplomaId: string,
+): Promise<DeleteDiplomaResponse> {
+  const jwt = await getNextAuthToken();
+  const token = jwt?.token;
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  try {
+    const response = await fetch(`${baseUrl}/diplomas/${diplomaId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const payload = (await response.json()) as DeleteDiplomaResponse;
+
+    revalidateTag("diplomas");
+    revalidatePath("/");
     return payload;
   } catch (error) {
     throw error;

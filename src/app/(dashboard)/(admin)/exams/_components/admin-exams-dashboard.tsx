@@ -24,10 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { getAdminExams } from "../_actions/exams.actions";
-import {
-  AdminExam,
-  AdminExamCardItem,
-} from "../_types/admin-exam";
+import { AdminExam, AdminExamCardItem } from "../_types/admin-exam";
 import AdminExamCard from "./admin-exam-card";
 
 type SortKey =
@@ -103,7 +100,9 @@ export default function AdminExamsDashboard() {
   const exams = useMemo(() => data?.payload?.data ?? [], [data]);
 
   const diplomaOptions = useMemo(() => {
-    const set = new Set(exams.map((e) => e.diploma?.title || "Unknown Diploma"));
+    const set = new Set(
+      exams.map((e) => e.diploma?.title || "Unknown Diploma"),
+    );
     return ["all", ...Array.from(set).sort((a, b) => a.localeCompare(b))];
   }, [exams]);
 
@@ -140,51 +139,52 @@ export default function AdminExamsDashboard() {
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-[#f4f5f7] font-mono text-[13px]">
       <div className="flex shrink-0 items-center gap-2 border-b border-gray-200 bg-white px-6 py-3">
-        <span className="text-xs text-gray-500">Exams</span>
+        <span className="text-xs text-blue-500">Exams</span>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col px-4 py-4 sm:px-6">
-        <div className="mb-4 flex shrink-0 flex-col gap-3 rounded border border-gray-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="text-xs text-gray-500">
-              {total === 0 ? "0 results" : `${rangeFrom} - ${rangeTo} of ${total}`}
+      <div className="mb-4 flex shrink-0 flex-col gap-3 rounded border border-gray-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="text-xs text-gray-500">
+            {total === 0
+              ? "0 results"
+              : `${rangeFrom} - ${rangeTo} of ${total}`}
+          </span>
+
+          <div className="flex items-center gap-1">
+            <Button
+              type="button"
+              variant="outline"
+              size="icon-sm"
+              className="border-gray-300"
+              disabled={safePage <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="min-w-28 text-center text-xs text-gray-600">
+              Page {safePage} of {pageCount}
             </span>
-
-            <div className="flex items-center gap-1">
-              <Button
-                type="button"
-                variant="outline"
-                size="icon-sm"
-                className="border-gray-300"
-                disabled={safePage <= 1}
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <span className="min-w-28 text-center text-xs text-gray-600">
-                Page {safePage} of {pageCount}
-              </span>
-              <Button
-                type="button"
-                variant="outline"
-                size="icon-sm"
-                className="border-gray-300"
-                disabled={safePage >= pageCount}
-                onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon-sm"
+              className="border-gray-300"
+              disabled={safePage >= pageCount}
+              onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
           </div>
-
-          <Button className="border-0 rounded-none bg-[#00BC7D] text-white hover:bg-[#00a16a]">
-            <Link href="/exams/new" className="flex items-center gap-1">
-              <Plus className="h-4 w-4" />
-              Create New Exam
-            </Link>
-          </Button>
         </div>
 
+        <Button className="border-0 rounded-none bg-[#00BC7D] text-white hover:bg-[#00a16a]">
+          <Link href="/exams/new" className="flex items-center gap-1">
+            <Plus className="h-4 w-4" />
+            Create New Exam
+          </Link>
+        </Button>
+      </div>
+      <div className="flex min-h-0 flex-1 flex-col px-4 py-4 sm:px-6">
         <div className="mb-4 shrink-0 rounded border border-gray-200 bg-white shadow-sm">
           <button
             type="button"
@@ -302,7 +302,10 @@ export default function AdminExamsDashboard() {
                   Sort
                   <ArrowDownAZ className="h-3.5 w-3.5" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="font-sans text-sm">
+                <DropdownMenuContent
+                  align="end"
+                  className="font-sans text-sm bg-white"
+                >
                   <DropdownMenuItem onClick={() => setSort("title-desc")}>
                     <ArrowUpAZ className="h-4 w-4" />
                     Title (descending)

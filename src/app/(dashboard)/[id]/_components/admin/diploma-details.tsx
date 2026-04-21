@@ -1,15 +1,41 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
-import { Ban, CircleOff, Pencil, Trash2 } from "lucide-react";
+import { Ban, Pencil, Trash2 } from "lucide-react";
 import { Diploma } from "@/lib/types/diplomas";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { deleteDiplomaById } from "@/app/(dashboard)/_actions/diplomas.actions";
+import ConfirmDeleteModal from "@/components/shared/confirm-delete-modal";
 
 export default function DiplomaDetails({
  diploma
 }: { diploma: Diploma }) {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+  const { mutate: deleteDiploma, isPending: isDeletingDiploma } = useMutation({
+    mutationFn: () => deleteDiplomaById(diploma.id),
+    onSuccess: (response) => {
+      toast.success(response?.message || "Diploma deleted successfully", {
+        position: "top-right",
+      });
+      setConfirmDeleteOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["admin-diplomas"] });
+      router.push("/");
+      router.refresh();
+    },
+    onError: (error: Error) => {
+      toast.error(error?.message || "Failed to delete diploma", {
+        position: "top-right",
+      });
+    },
+  });
+
   return (
     // bredcumbs
     <div className="flex h-full min-h-0 flex-col bg-[#f4f5f7] font-mono text-[13px]">
@@ -36,6 +62,7 @@ export default function DiplomaDetails({
             </span>
             <button
               type="button"
+              onClick={() => router.push(`/${diploma.id}/edit`)}
               className="inline-flex items-center gap-1 bg-[#155DFC] px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
             >
               <Pencil className="h-3.5 w-3.5" />
@@ -43,6 +70,7 @@ export default function DiplomaDetails({
             </button>
             <button
               type="button"
+              onClick={() => setConfirmDeleteOpen(true)}
               className="inline-flex items-center gap-1 bg-[#EF4444] px-3 py-1.5 text-xs font-medium text-white hover:bg-red-600"
             >
               <Trash2 className="h-3.5 w-3.5" />
@@ -80,6 +108,16 @@ export default function DiplomaDetails({
           </p>
         </div>
       </div>
+
+      <ConfirmDeleteModal
+        open={confirmDeleteOpen}
+        title="Delete this diploma?"
+        description="This action is permanent and cannot be undone."
+        deleteLabel="Delete"
+        isPending={isDeletingDiploma}
+        onCancel={() => setConfirmDeleteOpen(false)}
+        onConfirm={() => deleteDiploma()}
+      />
     </div>
   );
 }

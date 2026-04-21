@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { Eye, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import {
@@ -9,11 +10,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import type { AdminDiplomaMock } from "./admin-diplomas.mock";
 import { useRouter } from "next/navigation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { Diploma } from "@/lib/types/diplomas";
+import { deleteDiplomaById } from "@/app/(dashboard)/_actions/diplomas.actions";
+import ConfirmDeleteModal from "@/components/shared/confirm-delete-modal";
 
 type AdminDiplomaCardProps = {
-  diploma: AdminDiplomaMock;
+  diploma: Diploma;
   className?: string;
 };
 
@@ -22,9 +27,32 @@ export default function AdminDiplomaCard({
   className,
 }: AdminDiplomaCardProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+  const { mutate: removeDiploma, isPending: isDeletingDiploma } = useMutation({
+    mutationFn: () => deleteDiplomaById(diploma.id),
+    onSuccess: (response) => {
+      toast.success(response?.message || "Diploma deleted successfully", {
+        position: "top-right",
+      });
+      setConfirmDeleteOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["admin-diplomas"] });
+      router.refresh();
+    },
+    onError: (error: Error) => {
+      toast.error(error?.message || "Failed to delete diploma", {
+        position: "top-right",
+      });
+    },
+  });
 
   const handleOpenDetails = () => {
-    router.push(`/${diploma.id}?title=${encodeURIComponent(diploma.title)}`);
+    router.push(`/${diploma.id}`);
+  };
+
+  const handleOpenEdit = () => {
+    router.push(`/${diploma.id}/edit`);
   };
 
   return (
@@ -38,12 +66,8 @@ export default function AdminDiplomaCard({
           handleOpenDetails();
         }
       }}
-      className={cn(
-        "flex flex-col cursor-pointer gap-3 border-b border-gray-200 bg-gray-100 px-4 py-4 text-sm last:border-b-0 font-mono sm:grid sm:grid-cols-[56px_1fr_1.2fr_40px] sm:items-center sm:gap-4",
-        className,
-      )}
+      className="flex flex-col cursor-pointer gap-3 border-b border-gray-200 bg-gray-100 px-4 py-4 text-sm last:border-b-0 font-mono sm:grid sm:grid-cols-[56px_1fr_1.2fr_40px] sm:items-center sm:gap-4"
     >
-
       <div className="relative h-40 w-full shrink-0 overflow-hidden rounded border border-slate-200 sm:h-14 sm:w-14">
         <Image
           unoptimized
@@ -57,7 +81,7 @@ export default function AdminDiplomaCard({
 
       <div className="min-w-0">
         <p
-          className="font-semibold text-gray-900 truncate"
+          className="font-semibold text-gray-900 truncate hover:underline"
           title={diploma.title}
         >
           {diploma.title}
@@ -77,7 +101,10 @@ export default function AdminDiplomaCard({
           <DropdownMenuTrigger className="rounded p-1 text-gray-500 outline-none hover:bg-gray-100 hover:text-gray-800">
             <MoreVertical className="h-4 w-4" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-40 font-sans">
+          <DropdownMenuContent
+            align="end"
+            className="w-40 font-sans bg-white *:hover:bg-gray-100"
+          >
             <DropdownMenuItem
               className="gap-2 cursor-pointer"
               onClick={handleOpenDetails}
@@ -85,16 +112,35 @@ export default function AdminDiplomaCard({
               <Eye className="h-4 w-4" />
               View
             </DropdownMenuItem>
-            <DropdownMenuItem className="gap-2 cursor-pointer">
+            <DropdownMenuItem
+              className="gap-2 cursor-pointer"
+              onClick={handleOpenEdit}
+            >
               <Pencil className="h-4 w-4" />
               Edit
             </DropdownMenuItem>
-            <DropdownMenuItem className="gap-2 cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50">
+            <DropdownMenuItem
+              className="gap-2 cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
+              onClick={() => setConfirmDeleteOpen(true)}
+            >
               <Trash2 className="h-4 w-4" />
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+      </div>
+
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+      <div onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+        <ConfirmDeleteModal
+          open={confirmDeleteOpen}
+          title="Delete this diploma?"
+          description="This will permanently delete the diploma and all associated data."
+          deleteLabel="Delete"
+          isPending={isDeletingDiploma}
+          onCancel={() => setConfirmDeleteOpen(false)}
+          onConfirm={() => removeDiploma()}
+        />
       </div>
     </div>
   );

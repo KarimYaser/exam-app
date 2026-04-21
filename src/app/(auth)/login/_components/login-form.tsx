@@ -76,11 +76,6 @@ export default function LoginForm(): React.ReactNode {
             placeholder="••••••••"
             className="w-full rounded-md border border-gray-300 px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition pr-10"
           />
-          {errors.password && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.password.message}
-            </p>
-          )}
           <button
             type="button"
             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
@@ -94,6 +89,9 @@ export default function LoginForm(): React.ReactNode {
             )}
           </button>
         </div>
+        {errors.password && (
+          <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+        )}
         <div className="text-right mt-1.5">
           <Link
             href="/forget-password"

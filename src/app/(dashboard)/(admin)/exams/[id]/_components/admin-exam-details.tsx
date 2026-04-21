@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
@@ -10,7 +11,6 @@ import {
   CalendarArrowUp,
   CircleOff,
   ExternalLink,
-  MoreHorizontal,
   Pencil,
   Plus,
   Trash2,
@@ -22,6 +22,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AdminExam } from "../../_types/admin-exam";
+import { toast } from "sonner";
+import { deleteQuestionById } from "@/app/(dashboard)/[id]/[examId]/_actions/questions.actions";
+import AdminQuestionCard from "../../_components/admin-question-card";
+import { deleteExamById } from "../../_actions/exams.actions";
+import ConfirmDeleteModal from "@/components/shared/confirm-delete-modal";
 
 type SortKey = "title-asc" | "title-desc" | "newest-desc" | "newest-asc";
 
@@ -68,7 +73,43 @@ export default function AdminExamDetails({
   questions,
 }: AdminExamDetailsProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [sort, setSort] = useState<SortKey>("title-desc");
+  const [confirmDeleteExamOpen, setConfirmDeleteExamOpen] = useState(false);
+
+  const { mutate: deleteQuestion, isPending: isDeletingQuestion } = useMutation({
+    mutationFn: (questionId: string) => deleteQuestionById(questionId, exam.id),
+    onSuccess: (response) => {
+      toast.success(response?.message || "Question deleted successfully", {
+        position: "top-right",
+      });
+      queryClient.invalidateQueries({ queryKey: ["admin-exams"] });
+      router.refresh();
+    },
+    onError: (error: Error) => {
+      toast.error(error?.message || "Failed to delete question", {
+        position: "top-right",
+      });
+    },
+  });
+
+  const { mutate: deleteExam, isPending: isDeletingExam } = useMutation({
+    mutationFn: () => deleteExamById(exam.id),
+    onSuccess: (response) => {
+      toast.success(response?.message || "Exam deleted successfully", {
+        position: "top-right",
+      });
+      setConfirmDeleteExamOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["admin-exams"] });
+      router.push("/exams");
+      router.refresh();
+    },
+    onError: (error: Error) => {
+      toast.error(error?.message || "Failed to delete exam", {
+        position: "top-right",
+      });
+    },
+  });
 
   const sortedQuestions = useMemo(
     () => applyQuestionSort(questions, sort),
@@ -80,13 +121,13 @@ export default function AdminExamDetails({
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-[#f4f5f7] font-mono text-[13px] overflow-y-auto">
       <div className="flex shrink-0 items-center gap-2 border-b border-gray-200 bg-white px-4 py-3 text-xs sm:px-6">
-        <span className="text-gray-500">Exams</span>
+        <span className="text-gray-500 hover:underline cursor-pointer" onClick={()=>router.push("/exams")}>Exams</span>
         <span className="text-gray-300">/</span>
         <span className="font-semibold text-[#155DFC]">{exam.title}</span>
       </div>
 
-      <div className="px-4 py-4 sm:px-6">
-        <div className="mb-4 flex flex-col gap-3 border-b border-gray-200 pb-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-4 flex flex-col gap-3 border-b border-gray-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
+          
           <div>
             <h1 className="text-2xl font-semibold tracking-tight text-gray-800">
               {exam.title}
@@ -111,6 +152,7 @@ export default function AdminExamDetails({
             </button>
             <button
               type="button"
+              onClick={() => setConfirmDeleteExamOpen(true)}
               className="inline-flex items-center gap-1 bg-[#EF4444] px-3 py-1.5 text-xs font-medium text-white hover:bg-red-600"
             >
               <Trash2 className="h-3.5 w-3.5" />
@@ -118,6 +160,7 @@ export default function AdminExamDetails({
             </button>
           </div>
         </div>
+      <div className="px-4 py-4 sm:px-6">
 
         <div className="mb-4 rounded border border-gray-200 bg-white p-3 sm:p-4">
           <div className="mb-1 text-xs font-medium text-gray-400">Image</div>
@@ -170,6 +213,7 @@ export default function AdminExamDetails({
             <span className="text-sm font-semibold">Exam Questions</span>
             <button
               type="button"
+              onClick={() => router.push(`/exams/${exam.id}/questions/new`)}
               className="inline-flex items-center gap-1 text-xs hover:underline"
             >
               <Plus className="h-3.5 w-3.5" />
@@ -186,7 +230,7 @@ export default function AdminExamDetails({
                   Sort
                   <ArrowDownAZ className="h-3.5 w-3.5" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="font-sans text-sm">
+                <DropdownMenuContent align="end" className="font-sans text-sm bg-white">
                   <DropdownMenuItem onClick={() => setSort("title-desc")}>
                     <ArrowUpAZ className="h-4 w-4" />
                     Title (descending)
@@ -215,30 +259,30 @@ export default function AdminExamDetails({
               </p>
             ) : (
               sortedQuestions.map((question) => (
-                <div
+                <AdminQuestionCard
                   key={question.id}
-                  className="grid grid-cols-[1fr_220px_40px] items-center gap-3 border-b border-gray-100 px-3 py-2 text-sm last:border-b-0 sm:px-4"
-                >
-                  <p className="truncate text-gray-800" title={question.text}>
-                    {question.text}
-                  </p>
-                  <p className="truncate text-gray-500" title={exam.title}>
-                    {exam.title}
-                  </p>
-                  <div className="flex justify-end">
-                    <button
-                      type="button"
-                      className="rounded p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-800"
-                    >
-                      <MoreHorizontal className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
+                  examId={exam.id}
+                  examTitle={exam.title}
+                  question={question}
+                  showExamColumn
+                  isDeleting={isDeletingQuestion}
+                  onDelete={deleteQuestion}
+                />
               ))
             )}
           </div>
         </div>
       </div>
+
+      <ConfirmDeleteModal
+        open={confirmDeleteExamOpen}
+        title="Delete this exam?"
+        description="This action is permanent and cannot be undone."
+        deleteLabel="Delete"
+        isPending={isDeletingExam}
+        onCancel={() => setConfirmDeleteExamOpen(false)}
+        onConfirm={() => deleteExam()}
+      />
     </div>
   );
 }

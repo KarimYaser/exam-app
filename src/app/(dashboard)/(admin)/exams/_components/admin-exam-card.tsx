@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { MoreHorizontal } from "lucide-react";
@@ -10,6 +12,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AdminExamCardItem } from "../_types/admin-exam";
+import { deleteExamById } from "../_actions/exams.actions";
+import { toast } from "sonner";
+import ConfirmDeleteModal from "@/components/shared/confirm-delete-modal";
 
 type AdminExamCardProps = {
   exam: AdminExamCardItem;
@@ -17,9 +22,32 @@ type AdminExamCardProps = {
 
 export default function AdminExamCard({ exam }: AdminExamCardProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+  const { mutate: removeExam, isPending: isDeletingExam } = useMutation({
+    mutationFn: () => deleteExamById(exam.id),
+    onSuccess: (response) => {
+      toast.success(response?.message || "Exam deleted successfully", {
+        position: "top-right",
+      });
+      setConfirmDeleteOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["admin-exams"] });
+      router.refresh();
+    },
+    onError: (error: Error) => {
+      toast.error(error?.message || "Failed to delete exam", {
+        position: "top-right",
+      });
+    },
+  });
 
   const goToDetails = () => {
     router.push(`/exams/${exam.id}`);
+  };
+
+  const goToEdit = () => {
+    router.push(`/exams/${exam.id}/edit`);
   };
 
   return (
@@ -77,17 +105,32 @@ export default function AdminExamCard({ exam }: AdminExamCardProps) {
           <DropdownMenuTrigger className="rounded p-1 text-gray-500 outline-none hover:bg-gray-100 hover:text-gray-800">
             <MoreHorizontal className="h-4 w-4" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="font-sans">
+          <DropdownMenuContent align="end" className="font-sans bg-white">
             <DropdownMenuItem className="cursor-pointer" onClick={goToDetails}>
               View
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer">Edit</DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer text-red-600 focus:bg-red-50 focus:text-red-600">
+            <DropdownMenuItem className="cursor-pointer" onClick={goToEdit}>
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer text-red-600 focus:bg-red-50 focus:text-red-600"
+              onClick={() => setConfirmDeleteOpen(true)}
+            >
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      <ConfirmDeleteModal
+        open={confirmDeleteOpen}
+        title="Delete this exam?"
+        description="This will permanently delete the exam and related question data."
+        deleteLabel="Delete"
+        isPending={isDeletingExam}
+        onCancel={() => setConfirmDeleteOpen(false)}
+        onConfirm={() => removeExam()}
+      />
     </div>
   );
 }

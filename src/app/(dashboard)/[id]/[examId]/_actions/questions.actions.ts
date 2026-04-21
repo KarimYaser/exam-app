@@ -1,11 +1,66 @@
 "use server";
 
 import { getNextAuthToken } from "@/lib/util/auth.util";
+import { revalidatePath } from "next/cache";
 import {
   QuestionsListResponse,
   SubmitExamRequest,
   SubmissionDetailsResponse,
 } from "../_types/question";
+
+export interface QuestionAnswerPayload {
+  id: string;
+  text: string;
+  isCorrect?: boolean;
+}
+
+export interface QuestionPayload {
+  id: string;
+  text: string;
+  examId: string;
+  answers: QuestionAnswerPayload[];
+}
+
+export interface QuestionDetailsResponse {
+  status: boolean;
+  code: number;
+  message?: string;
+  payload?: {
+    question?: QuestionPayload;
+  };
+  question?: QuestionPayload;
+}
+
+export interface QuestionAnswerInput {
+  text: string;
+  isCorrect: boolean;
+}
+
+export interface CreateQuestionInput {
+  text: string;
+  examId: string;
+  answers: QuestionAnswerInput[];
+}
+
+export interface UpdateQuestionInput {
+  text: string;
+  answers: QuestionAnswerInput[];
+}
+
+export interface CreateOrUpdateQuestionResponse {
+  status: boolean;
+  code: number;
+  message: string;
+  payload?: {
+    question?: QuestionPayload;
+  };
+}
+
+export interface DeleteQuestionResponse {
+  status: boolean;
+  code: number;
+  message: string;
+}
 
 export async function getExamQuestions(
   examId: string
@@ -37,6 +92,116 @@ export async function getExamQuestions(
     return payload;
   } catch (error) {
     // console.error("Error fetching exam questions:", error);
+    throw error;
+  }
+}
+
+export async function getQuestionById(
+  questionId: string,
+): Promise<QuestionDetailsResponse> {
+  const jwt = await getNextAuthToken();
+  const token = jwt?.token;
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  try {
+    const response = await fetch(`${baseUrl}/questions/${questionId}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+    });
+
+    const payload:QuestionDetailsResponse = await response.json()
+   
+
+    return payload;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function createQuestion(
+  values: CreateQuestionInput,
+): Promise<CreateOrUpdateQuestionResponse> {
+  const jwt = await getNextAuthToken();
+  const token = jwt?.token;
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  try {
+    const response = await fetch(`${baseUrl}/questions`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    });
+
+    const payload: CreateOrUpdateQuestionResponse = await response.json();
+
+
+    revalidatePath(`/exams/${values.examId}`);
+    return payload;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function updateQuestionById(
+  questionId: string,
+  values: UpdateQuestionInput,
+): Promise<CreateOrUpdateQuestionResponse> {
+  const jwt = await getNextAuthToken();
+  const token = jwt?.token;
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  try {
+    const response = await fetch(`${baseUrl}/questions/${questionId}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    });
+
+    const payload: CreateOrUpdateQuestionResponse = await response.json();
+
+    
+      revalidatePath(`/exams/${payload.payload?.question?.examId}`);
+    return payload;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function deleteQuestionById(
+  questionId: string,
+  examId?: string,
+): Promise<DeleteQuestionResponse> {
+  const jwt = await getNextAuthToken();
+  const token = jwt?.token;
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  try {
+    const response = await fetch(`${baseUrl}/questions/${questionId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const payload: DeleteQuestionResponse = await response.json();
+
+    if (examId) {
+      revalidatePath(`/exams/${examId}`);
+    }
+
+    return payload;
+  } catch (error) {
     throw error;
   }
 }

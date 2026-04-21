@@ -1,8 +1,9 @@
+import isAdmin  from "@/lib/util/is-admin";
 import { NextRequest, NextResponse } from "next/server";
 import { getNextAuthToken } from "./lib/util/auth.util";
 import { getToken } from "next-auth/jwt";
 
-const privateRoutes = new Set([
+const userPrivateRoutes = new Set([
   "/",
   "/overview",
   "/settings",
@@ -11,6 +12,24 @@ const privateRoutes = new Set([
   "/exams/[examId]",
   "/[id]/[examId]",
   "/[id]",
+  "/[id]/[id]/[examId]",
+]);
+
+const adminPrivateRoutes = new Set([
+  "/",
+  "/admin",
+  "/settings",
+  "/profile",
+  "/audit",
+  "/new-diploma",
+  "/exams",
+  "/exams/new",
+  "/exams/[examId]",
+  "/exams/[id]",
+  "/exams/[id]/edit",
+  "/[id]/[examId]",
+  "/[id]",
+  "/[id]/edit",
   "/[id]/[id]/[examId]",
 ]);
 
@@ -24,10 +43,10 @@ const authRoutes = new Set([
 export default async function proxy(request: NextRequest) {
   const jwt = await getToken({ req: request });
   const pathname = request.nextUrl.pathname;
-
+const isAdminUser = await isAdmin();
   // User cannot access private routes without authentication
   // User cannot access auth routes if they are authenticated
-
+const privateRoutes = isAdminUser ? adminPrivateRoutes : userPrivateRoutes;
   if (privateRoutes.has(pathname)) {
     if (jwt) return NextResponse.next(); /* allow all */
 

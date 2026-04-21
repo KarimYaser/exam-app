@@ -3,6 +3,8 @@ import { getDiplomas } from "@/app/(dashboard)/_actions/diplomas.actions";
 import { getExamQuestions } from "../../../../[id]/[examId]/_actions/questions.actions";
 import { getAdminExams } from "../../_actions/exams.actions";
 import EditExamForm from "./_components/edit-exam-form";
+import isAdmin from "@/lib/util/is-admin";
+import Unauthorized from "@/app/unauthorized";
 
 interface EditExamPageProps {
   params: Promise<{ id: string; edit: string }>;
@@ -27,6 +29,11 @@ export default async function ExamEditPage({ params }: EditExamPageProps) {
   const questionsRaw =
     questionsResponse?.payload?.questions ?? questionsResponse?.payload?.data ?? [];
   const questions = questionsRaw.map((q) => ({ id: q.id, text: q.text }));
+  const isAdminUser= await isAdmin()
 
-  return <EditExamForm exam={exam} diplomas={diplomas} questions={questions} />;
+  return<>
+  {isAdminUser ? <EditExamForm exam={exam} diplomas={diplomas} questions={questions} /> : <Unauthorized />};
+  </> 
+  // return <EditExamForm exam={exam} diplomas={diplomas} questions={questions} />;
+  // return isAdminUser ? <EditExamForm exam={exam} diplomas={diplomas} questions={questions} /> : notFound();
 }

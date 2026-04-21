@@ -66,9 +66,12 @@ function AdminSidebarContent() {
   return (
     <>
       <div className="md:hidden flex shrink-0 items-center justify-between border-b border-slate-800 bg-slate-950 p-4 z-30 sticky top-0">
-        <div className="flex items-center gap-2.5">
+        <div
+          className="flex items-center gap-2.5 cursor-pointer"
+          onClick={() => router.push("/")}
+        >
           {/* <Image src={logo} alt="Logo" width={30} height={30} /> */}
-            <FolderCode size={25} className="text-slate-300 bg-transparent" />
+          <FolderCode size={25} className="text-slate-300 bg-transparent" />
           <span className="text-sm font-semibold text-slate-100 font-mono">
             Exam App
           </span>
@@ -109,9 +112,13 @@ function AdminSidebarContent() {
           <Image
             src={elevateLogo}
             alt="Elevate"
-            className="mt-1 max-h-8 w-auto object-contain opacity-90"
+            className="mt-1 max-h-8 w-auto object-contain opacity-90 cursor-pointer"
             width={120}
             height={32}
+            onClick={() => {
+              router.push("/");
+              setIsOpen(false);
+            }}
           />
           <div className="flex items-center gap-2 ml-2.5">
             {/* <Image src={logo} alt="Logo" width={26} height={26} className="invert opacity-90" /> */}
