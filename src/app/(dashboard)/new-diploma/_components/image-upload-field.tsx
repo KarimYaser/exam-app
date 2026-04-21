@@ -136,9 +136,7 @@ export function ImageUploadField({
 
   return (
     <div>
-      <label className="mb-1.5 block text-sm font-medium text-gray-700">
-        Image
-      </label>
+      <label className="mb-1.5 block text-sm font-medium text-gray-700">Image</label>
 
       <input
         ref={inputRef}
@@ -177,9 +175,7 @@ export function ImageUploadField({
               sizes="288px"
               onError={() => {
                 if (localPreviewUrl) {
-                  setUploadError(
-                    "Image selected successfully, but remote preview is unavailable",
-                  );
+                  setUploadError("Image selected successfully, but remote preview is unavailable");
                   return;
                 }
 
@@ -188,9 +184,7 @@ export function ImageUploadField({
                   return;
                 }
 
-                setUploadError(
-                  "Image uploaded, but preview URL could not be loaded",
-                );
+                setUploadError("Image uploaded, but preview URL could not be loaded");
               }}
             />
 

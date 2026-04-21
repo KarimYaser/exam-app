@@ -34,6 +34,11 @@ export async function updateDiplomaById(
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
   try {
+    console.log(
+      "[updateDiplomaById] Sending values:",
+      JSON.stringify(values, null, 2),
+    );
+
     const response = await fetch(`${baseUrl}/diplomas/${diplomaId}`, {
       method: "PUT",
       headers: {
@@ -43,7 +48,7 @@ export async function updateDiplomaById(
       body: JSON.stringify(values),
     });
 
-    const payload:UpdateDiplomaResponse = await response.json();
+    const payload: UpdateDiplomaResponse = await response.json();
 
     revalidateTag("diplomas");
     revalidatePath("/");

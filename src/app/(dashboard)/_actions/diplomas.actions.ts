@@ -80,36 +80,6 @@ export async function getDiplomas(
   }
 }
 
-export async function createDiploma(
-  values: CreateDiplomaInput,
-): Promise<CreateDiplomaResponse> {
-  const jwt = await getNextAuthToken();
-  const token = jwt?.token;
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-
-  try {
-    const response = await fetch(`${baseUrl}/diplomas`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(values),
-    });
-
-    const payload = (await response.json()) as CreateDiplomaResponse;
-
-    if (!response.ok) {
-      throw new Error(payload?.message || "Failed to create diploma");
-    }
-
-    revalidateTag("diplomas");
-    return payload;
-  } catch (error) {
-    throw error;
-  }
-}
-
 export async function deleteDiplomaById(
   diplomaId: string,
 ): Promise<DeleteDiplomaResponse> {

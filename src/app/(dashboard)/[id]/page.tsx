@@ -30,10 +30,8 @@ export default async function DiplomaExamsPage({
 
   return (
     <>
-      { isAdminUser ? (
-        <DiplomaDetails      
-            diploma={diploma}
-        />
+      {isAdminUser ? (
+        <DiplomaDetails diploma={diploma} />
       ) : (
         <ExamsContent diplomaId={diplomaId} diplomaTitle={diplomaTitle} />
       )}

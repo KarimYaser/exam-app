@@ -19,12 +19,13 @@ import {
   type EditDiplomaFormValues,
 } from "../_schema/edit-diploma.schema";
 import type { EditDiplomaPageProps } from "../_types/edit-diploma.types";
-import ImageUploadField from "./image-upload-field";
+import { ImageUploadField } from "./image-upload-field";
 
 export default function EditDiplomaForm({ diploma }: EditDiplomaPageProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [isImageUploading, setIsImageUploading] = useState(false);
 
   const {
     register,
@@ -42,7 +43,7 @@ export default function EditDiplomaForm({ diploma }: EditDiplomaPageProps) {
     mode: "onBlur",
   });
 
-  const selectedImage = watch("image");
+  const selectedImage = watch("image") ?? "";
 
   const { mutate: updateDiploma, isPending } = useMutation({
     mutationFn: (values: UpdateDiplomaInput) =>
@@ -141,7 +142,7 @@ export default function EditDiplomaForm({ diploma }: EditDiplomaPageProps) {
               type="submit"
               form="edit-diploma-form"
               className="rounded-none border-0 bg-[#00BC7D] text-white hover:bg-[#01a66f]"
-              disabled={isPending || isDeletingDiploma}
+              disabled={isPending || isDeletingDiploma || isImageUploading}
             >
               <Save className="h-4 w-4" />
               {isPending ? "Saving..." : "Save"}
@@ -182,20 +183,29 @@ export default function EditDiplomaForm({ diploma }: EditDiplomaPageProps) {
             <div>
               <input type="hidden" {...register("image")} />
               <ImageUploadField
-                image={selectedImage}
-                onChangeImage={(image) =>
+                value={selectedImage}
+                error={errors.image?.message}
+                onUploadingChange={setIsImageUploading}
+                onChange={(image: any) =>
                   setValue("image", image, {
                     shouldDirty: true,
                     shouldTouch: true,
                     shouldValidate: true,
                   })
                 }
+                onRemove={() =>
+                  setValue("image", "", {
+                    shouldDirty: true,
+                    shouldTouch: true,
+                    shouldValidate: true,
+                  })
+                }
               />
-              {errors.image?.message ? (
+              {/* {errors.image?.message ? (
                 <p className="mt-1 text-xs text-red-500">
                   {errors.image.message}
                 </p>
-              ) : null}
+              ) : null} */}
             </div>
 
             <div>

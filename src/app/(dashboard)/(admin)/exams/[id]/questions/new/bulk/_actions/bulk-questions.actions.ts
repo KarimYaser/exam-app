@@ -47,7 +47,7 @@ export async function bulkCreateQuestions(
     body: JSON.stringify(input),
   });
 
-  const payload = (await response.json()) as BulkCreateQuestionsResponse;
+  const payload:BulkCreateQuestionsResponse = await response.json();
 
   revalidatePath(`/exams/${examId}`);
   return payload;

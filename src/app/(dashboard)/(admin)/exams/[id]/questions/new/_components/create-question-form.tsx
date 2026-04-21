@@ -129,7 +129,7 @@ export default function CreateQuestionForm({
           type="button"
           variant="secondary"
           className="rounded-none bg-gray-200 text-gray-700 hover:bg-gray-300"
-          onClick={() => router.push(`/exams/${examId}/new/bulk`)}
+          onClick={() => router.push(`/exams/${examId}/questions/new/bulk`)}
           disabled={isPending}
         >
           <CopyPlus className="h-4 w-4" />

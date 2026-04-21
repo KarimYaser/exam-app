@@ -62,6 +62,7 @@ export function CreateExamForm({
   const router = useRouter();
   const { mutate: create, isPending } = useCreateExam();
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isImageUploading, setIsImageUploading] = useState(false);
 
   const { data: diplomasQueryData } = useQuery({
     queryKey: ["create-exam-diplomas"],
@@ -87,7 +88,7 @@ export function CreateExamForm({
     register,
     handleSubmit,
     setValue,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<CreateExamFormValues>({
     resolver: zodResolver(createExamSchema),
     defaultValues: {
@@ -96,7 +97,7 @@ export function CreateExamForm({
       image: "",
       diplomaInput: "",
     },
-    mode: "onBlur",
+    mode: "onChange",
   });
 
   const imageValue = useWatch({ control, name: "image" }) ?? "";
@@ -177,8 +178,8 @@ export function CreateExamForm({
           <Button
             type="submit"
             form="new-exam-form"
-            className="rounded-none border-0 bg-[#00BC7D] text-white hover:bg-[#01a66f]"
-            disabled={isPending}
+            className="rounded-none border-0 bg-[#00BC7D] text-white hover:bg-[#01a66f] disabled:opacity-50"
+            disabled={isPending || isImageUploading || !isValid}
           >
             <Save className="h-4 w-4" />
             {isPending ? "Saving..." : "Save"}
@@ -281,6 +282,7 @@ export function CreateExamForm({
               <ImageUploadField
                 value={imageValue}
                 error={errors.image?.message}
+                onUploadingChange={setIsImageUploading}
                 onChange={(value) =>
                   setValue("image", value, {
                     shouldDirty: true,

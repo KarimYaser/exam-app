@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import isAdmin from "@/lib/util/is-admin";
 import Unauthorized from "@/app/unauthorized";
-import { getAdminExams } from "../../../_actions/exams.actions";
+import { getAdminExams } from "../../../../_actions/exams.actions";
 import BulkAddForm from "./_components/bulk-add-form";
 
 interface BulkAddQuestionsPageProps {
