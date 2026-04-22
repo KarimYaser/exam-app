@@ -20,18 +20,25 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import AdminDiplomaCard from "./admin-diploma-card";
-import {
-  ADMIN_DIPLOMAS_PAGE_SIZE,
-  type AdminDiplomaMock,
-} from "./admin-diplomas.mock";
 import { useRouter } from "next/navigation";
 import type { Diploma } from "../../_actions/diplomas.actions";
 import Link from "next/link";
 import useAdminDiplomasList from "../../_hooks/use-admin-diplomas-list";
 
+const ADMIN_DIPLOMAS_PAGE_SIZE = 12;
+
+type AdminDiplomaItem = {
+  id: string;
+  title: string;
+  description: string;
+  image?: string;
+  category: string;
+  createdAt: string;
+};
+
 type SortKey = "title-asc" | "title-desc" | "newest" | "oldest";
 
-function applySort(items: AdminDiplomaMock[], sort: SortKey): AdminDiplomaMock[] {
+function applySort(items: AdminDiplomaItem[], sort: SortKey): AdminDiplomaItem[] {
   const copy = [...items];
   switch (sort) {
     case "title-asc":
@@ -53,7 +60,7 @@ function applySort(items: AdminDiplomaMock[], sort: SortKey): AdminDiplomaMock[]
   }
 }
 
-function mapDiplomaToAdminItem(diploma: Diploma): AdminDiplomaMock {
+function mapDiplomaToAdminItem(diploma: Diploma): AdminDiplomaItem {
   return {
     id: diploma.id,
     title: diploma.title,
