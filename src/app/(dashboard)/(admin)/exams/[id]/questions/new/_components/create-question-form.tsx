@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import {
   createQuestion,
   type CreateQuestionInput,
-} from "@/app/(dashboard)/[id]/[examId]/_actions/questions.actions";
+} from "../../_actions/questions.actions";
 import {
   questionFormSchema,
   type QuestionFormValues,
@@ -63,7 +63,15 @@ export default function CreateQuestionForm({
   const answers = watch("answers");
 
   const { mutate: create, isPending } = useMutation({
-    mutationFn: (values: CreateQuestionInput) => createQuestion(values),
+    mutationFn: async (values: CreateQuestionInput) => {
+      const response = await createQuestion(values);
+
+      if (!response?.status) {
+        throw new Error(response?.message || "Failed to create question");
+      }
+
+      return response;
+    },
     onSuccess: (response) => {
       toast.success(response?.message || "Question created successfully", {
         position: "top-right",
@@ -97,7 +105,14 @@ export default function CreateQuestionForm({
   };
 
   const onSubmit = (values: QuestionFormValues) => {
-    create({ text: values.text, examId, answers: values.answers });
+    create({
+      text: values.text,
+      examId,
+      answers: values.answers.map((a) => ({
+        text: a.text,
+        isCorrect: a.isCorrect,
+      })),
+    });
   };
 
   return (

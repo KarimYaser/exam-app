@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { deleteQuestionById } from "@/app/(dashboard)/[id]/[examId]/_actions/questions.actions";
+import { deleteQuestionById } from "@/app/(dashboard)/(admin)/exams/[id]/questions/_actions/questions.actions";
 import { EditExamQuestionItem } from "../_types/edit-exam.types";
 import AdminQuestionCard from "../../../_components/admin-question-card";
 
@@ -13,25 +13,31 @@ type QuestionsPanelProps = {
   questions: EditExamQuestionItem[];
 };
 
-export default function QuestionsPanel({ examId, questions }: QuestionsPanelProps) {
+export default function QuestionsPanel({
+  examId,
+  questions,
+}: QuestionsPanelProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const { mutate: deleteQuestion, isPending: isDeletingQuestion } = useMutation({
-    mutationFn: (questionId: string) => deleteQuestionById(questionId, examId),
-    onSuccess: (response) => {
-      toast.success(response?.message || "Question deleted successfully", {
-        position: "top-right",
-      });
-      queryClient.invalidateQueries({ queryKey: ["admin-exams"] });
-      router.refresh();
+  const { mutate: deleteQuestion, isPending: isDeletingQuestion } = useMutation(
+    {
+      mutationFn: (questionId: string) =>
+        deleteQuestionById(questionId, examId),
+      onSuccess: (response) => {
+        toast.success(response?.message || "Question deleted successfully", {
+          position: "top-right",
+        });
+        queryClient.invalidateQueries({ queryKey: ["admin-exams"] });
+        router.refresh();
+      },
+      onError: (error: Error) => {
+        toast.error(error?.message || "Failed to delete question", {
+          position: "top-right",
+        });
+      },
     },
-    onError: (error: Error) => {
-      toast.error(error?.message || "Failed to delete question", {
-        position: "top-right",
-      });
-    },
-  });
+  );
 
   return (
     <div className="rounded border border-gray-200 bg-white shadow-sm">

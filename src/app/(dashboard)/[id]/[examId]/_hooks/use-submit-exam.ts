@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   submitExamAnswers,
   getSubmissionDetails,
-} from "../_actions/questions.actions";
+} from "@/app/(dashboard)/(admin)/exams/[id]/questions/_actions/questions.actions";
 
 /**
  * Mutation hook for submitting exam answers

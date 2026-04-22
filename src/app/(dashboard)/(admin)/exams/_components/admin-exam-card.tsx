@@ -51,7 +51,8 @@ export default function AdminExamCard({ exam }: AdminExamCardProps) {
   };
 
   return (
-    <div
+    <>
+      <div
       role="button"
       tabIndex={0}
       onClick={goToDetails}
@@ -114,12 +115,14 @@ export default function AdminExamCard({ exam }: AdminExamCardProps) {
             </DropdownMenuItem>
             <DropdownMenuItem
               className="cursor-pointer text-red-600 focus:bg-red-50 focus:text-red-600"
+              disabled={exam.immutable}
               onClick={() => setConfirmDeleteOpen(true)}
             >
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+      </div>
       </div>
 
       <ConfirmDeleteModal
@@ -131,6 +134,6 @@ export default function AdminExamCard({ exam }: AdminExamCardProps) {
         onCancel={() => setConfirmDeleteOpen(false)}
         onConfirm={() => removeExam()}
       />
-    </div>
+    </>
   );
 }

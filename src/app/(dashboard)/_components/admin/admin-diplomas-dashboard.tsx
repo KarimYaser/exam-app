@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import {
   ArrowDown,
   ArrowDownAZ,
@@ -28,6 +27,7 @@ import {
 import { useRouter } from "next/navigation";
 import type { Diploma } from "../../_actions/diplomas.actions";
 import Link from "next/link";
+import useAdminDiplomasList from "../../_hooks/use-admin-diplomas-list";
 
 type SortKey = "title-asc" | "title-desc" | "newest" | "oldest";
 
@@ -71,20 +71,10 @@ export default function AdminDiplomasDashboard() {
   const [filtersOpen, setFiltersOpen] = useState(true);
   const [sort, setSort] = useState<SortKey>("title-asc");
   const router = useRouter();
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["admin-diplomas"],
-    queryFn: async () => {
-      const response = await fetch(`/api/diplomas?page=1&limit=200`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch diplomas");
-      }
-      return response.json();
-    },
-    retry: 1,
-  });
+  const { data, isLoading, isError } = useAdminDiplomasList();
 
   const diplomas = useMemo(() => {
-    const apiItems: Diploma[] = data?.payload?.data ?? data?.data ?? [];
+    const apiItems: Diploma[] = data ?? [];
     return apiItems.map(mapDiplomaToAdminItem);
   }, [data]);
 

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getExamQuestions } from "../_actions/questions.actions";
+import { getExamQuestions } from "@/app/(dashboard)/(admin)/exams/[id]/questions/_actions/questions.actions";
 
 export default function useExamQuestions(examId: string) {
   const { data, isLoading, isError, error } = useQuery({

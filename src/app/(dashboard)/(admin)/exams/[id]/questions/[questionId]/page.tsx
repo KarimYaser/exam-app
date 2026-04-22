@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import isAdmin from "@/lib/util/is-admin";
 import Unauthorized from "@/app/unauthorized";
 import { getAdminExams } from "../../../_actions/exams.actions";
-import { getQuestionById } from "@/app/(dashboard)/[id]/[examId]/_actions/questions.actions";
+import { getQuestionById } from "@/app/(dashboard)/(admin)/exams/[id]/questions/_actions/questions.actions";
 import QuestionDetails from "./_components/question-details";
 
 interface QuestionDetailsPageProps {
@@ -27,13 +27,18 @@ export default async function QuestionDetailsPage({
   ]);
 
   const exam = examsResponse?.payload?.data?.find((item) => item.id === examId);
-  const question = questionResponse?.payload?.question ?? questionResponse?.question;
+  const question =
+    questionResponse?.payload?.question ?? questionResponse?.question;
 
   if (!exam || !question) {
     notFound();
   }
 
   return (
-    <QuestionDetails examId={examId} examTitle={exam.title} question={question} />
+    <QuestionDetails
+      examId={examId}
+      examTitle={exam.title}
+      question={question}
+    />
   );
 }

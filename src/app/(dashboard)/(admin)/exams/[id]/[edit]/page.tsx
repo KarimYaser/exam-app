@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getDiplomas } from "@/app/(dashboard)/_actions/diplomas.actions";
-import { getExamQuestions } from "../../../../[id]/[examId]/_actions/questions.actions";
+import { getExamQuestions } from "../questions/_actions/questions.actions";
 import { getAdminExams } from "../../_actions/exams.actions";
 import EditExamForm from "./_components/edit-exam-form";
 import isAdmin from "@/lib/util/is-admin";
@@ -14,11 +14,12 @@ export default async function ExamEditPage({ params }: EditExamPageProps) {
   const resolvedParams = await params;
   const examId = resolvedParams.id;
 
-  const [examsResponse, diplomasResponse, questionsResponse] = await Promise.all([
-    getAdminExams(1, 100),
-    getDiplomas(1, 100),
-    getExamQuestions(examId),
-  ]);
+  const [examsResponse, diplomasResponse, questionsResponse] =
+    await Promise.all([
+      getAdminExams(1, 100),
+      getDiplomas(1, 100),
+      getExamQuestions(examId),
+    ]);
 
   const exam = examsResponse?.payload?.data?.find((item) => item.id === examId);
   if (!exam) {
@@ -27,13 +28,22 @@ export default async function ExamEditPage({ params }: EditExamPageProps) {
 
   const diplomas = diplomasResponse?.payload?.data ?? [];
   const questionsRaw =
-    questionsResponse?.payload?.questions ?? questionsResponse?.payload?.data ?? [];
+    questionsResponse?.payload?.questions ??
+    questionsResponse?.payload?.data ??
+    [];
   const questions = questionsRaw.map((q) => ({ id: q.id, text: q.text }));
-  const isAdminUser= await isAdmin()
+  const isAdminUser = await isAdmin();
 
-  return<>
-  {isAdminUser ? <EditExamForm exam={exam} diplomas={diplomas} questions={questions} /> : <Unauthorized />};
-  </> 
+  return (
+    <>
+      {isAdminUser ? (
+        <EditExamForm exam={exam} diplomas={diplomas} questions={questions} />
+      ) : (
+        <Unauthorized />
+      )}
+      ;
+    </>
+  );
   // return <EditExamForm exam={exam} diplomas={diplomas} questions={questions} />;
   // return isAdminUser ? <EditExamForm exam={exam} diplomas={diplomas} questions={questions} /> : notFound();
 }

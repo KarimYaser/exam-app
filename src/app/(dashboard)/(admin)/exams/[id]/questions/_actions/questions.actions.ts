@@ -6,7 +6,7 @@ import {
   QuestionsListResponse,
   SubmitExamRequest,
   SubmissionDetailsResponse,
-} from "../_types/question";
+} from "@/app/(dashboard)/[id]/[examId]/_types/question";
 
 export interface QuestionAnswerPayload {
   id: string;
@@ -63,7 +63,7 @@ export interface DeleteQuestionResponse {
 }
 
 export async function getExamQuestions(
-  examId: string
+  examId: string,
 ): Promise<QuestionsListResponse> {
   const jwt = await getNextAuthToken();
   const token = jwt?.token;
@@ -81,9 +81,13 @@ export async function getExamQuestions(
 
     if (!response.ok) {
       console.error(
-        `Failed to fetch questions for exam ${examId}: ${response.status}`
+        `Failed to fetch questions for exam ${examId}: ${response.status}`,
       );
-      return { status: false, code: response.status, payload: { data: [], exam: { id: "", title: "", duration: 0 } } };
+      return {
+        status: false,
+        code: response.status,
+        payload: { data: [], exam: { id: "", title: "", duration: 0 } },
+      };
     }
 
     const payload: QuestionsListResponse = await response.json();
@@ -113,8 +117,7 @@ export async function getQuestionById(
       cache: "no-store",
     });
 
-    const payload:QuestionDetailsResponse = await response.json()
-   
+    const payload: QuestionDetailsResponse = await response.json();
 
     return payload;
   } catch (error) {
@@ -141,8 +144,11 @@ export async function createQuestion(
 
     const payload: CreateOrUpdateQuestionResponse = await response.json();
 
+    if (!response.ok || !payload?.status) {
+      throw new Error(payload?.message || "Failed to create question");
+    }
 
-    revalidatePath(`/exams/${values.examId}`);
+    // revalidatePath(`/exams/${values.examId}`);
     return payload;
   } catch (error) {
     throw error;
@@ -169,8 +175,6 @@ export async function updateQuestionById(
 
     const payload: CreateOrUpdateQuestionResponse = await response.json();
 
-    
-      revalidatePath(`/exams/${payload.payload?.question?.examId}`);
     return payload;
   } catch (error) {
     throw error;
@@ -206,11 +210,10 @@ export async function deleteQuestionById(
   }
 }
 
-
 export async function submitExamAnswers(
   examId: string,
   answers: Record<string, string>,
-  startedAt: string
+  startedAt: string,
 ): Promise<SubmissionDetailsResponse> {
   const jwt = await getNextAuthToken();
   const token = jwt?.token;
@@ -218,7 +221,9 @@ export async function submitExamAnswers(
 
   try {
     if (!token) {
-      throw new Error("Authentication token not available. Please log in again.");
+      throw new Error(
+        "Authentication token not available. Please log in again.",
+      );
     }
 
     if (!baseUrl) {
@@ -229,7 +234,7 @@ export async function submitExamAnswers(
       ([questionId, answerId]) => ({
         questionId,
         answerId,
-      })
+      }),
     );
 
     const payload: SubmitExamRequest = {
@@ -256,11 +261,12 @@ export async function submitExamAnswers(
     const responseData = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      const errorMessage = responseData?.message || responseData?.error || `HTTP ${response.status}`;
+      const errorMessage =
+        responseData?.message ||
+        responseData?.error ||
+        `HTTP ${response.status}`;
       // console.error("Failed to submit exam answers:", response.status, responseData);
-      throw new Error(
-        `Failed to submit exam: ${errorMessage}`
-      );
+      throw new Error(`Failed to submit exam: ${errorMessage}`);
     }
 
     const result: SubmissionDetailsResponse = responseData;
@@ -273,7 +279,7 @@ export async function submitExamAnswers(
 }
 
 export async function getSubmissionDetails(
-  submissionId: string
+  submissionId: string,
 ): Promise<SubmissionDetailsResponse> {
   const jwt = await getNextAuthToken();
   const token = jwt?.token;
@@ -301,11 +307,13 @@ export async function getSubmissionDetails(
         method: "GET",
         headers,
         cache: "no-store",
-      }
+      },
     );
 
     if (!fallbackResponse.ok) {
-      throw new Error(`Failed to fetch submission details: ${fallbackResponse.status}`);
+      throw new Error(
+        `Failed to fetch submission details: ${fallbackResponse.status}`,
+      );
     }
 
     return (await fallbackResponse.json()) as SubmissionDetailsResponse;

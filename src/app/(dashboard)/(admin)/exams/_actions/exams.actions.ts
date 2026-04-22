@@ -19,18 +19,20 @@ export async function getAdminExams(
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
   try {
-    const response = await fetch(`${baseUrl}/exams?page=${page}&limit=${limit}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+    const response = await fetch(
+      `${baseUrl}/exams?page=${page}&limit=${limit}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        cache: "no-store",
       },
-      cache: "no-store",
-    });
+    );
 
     const payload: AdminExamsResponse = await response.json();
-// console.log("getAdminExams payload", payload);
-    
+    // console.log("getAdminExams payload", payload);
 
     return payload;
   } catch (error) {
@@ -54,7 +56,7 @@ export async function deleteExamById(
       },
     });
 
-    const payload = (await response.json()) as DeleteExamResponse;
+    const payload: DeleteExamResponse = await response.json();
 
     revalidatePath("/exams");
     return payload;

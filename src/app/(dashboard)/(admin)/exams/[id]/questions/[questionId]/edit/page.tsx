@@ -2,14 +2,16 @@ import { notFound } from "next/navigation";
 import isAdmin from "@/lib/util/is-admin";
 import Unauthorized from "@/app/unauthorized";
 import { getAdminExams } from "../../../../_actions/exams.actions";
-import { getQuestionById } from "@/app/(dashboard)/[id]/[examId]/_actions/questions.actions";
+import { getQuestionById } from "@/app/(dashboard)/(admin)/exams/[id]/questions/_actions/questions.actions";
 import EditQuestionForm from "./_components/edit-question-form";
 
 interface EditQuestionPageProps {
   params: Promise<{ id: string; questionId: string }>;
 }
 
-export default async function EditQuestionPage({ params }: EditQuestionPageProps) {
+export default async function EditQuestionPage({
+  params,
+}: EditQuestionPageProps) {
   const isAdminUser = await isAdmin();
   if (!isAdminUser) {
     return <Unauthorized />;
@@ -25,11 +27,18 @@ export default async function EditQuestionPage({ params }: EditQuestionPageProps
   ]);
 
   const exam = examsResponse?.payload?.data?.find((item) => item.id === examId);
-  const question = questionResponse?.payload?.question ?? questionResponse?.question;
+  const question =
+    questionResponse?.payload?.question ?? questionResponse?.question;
 
   if (!exam || !question) {
     notFound();
   }
 
-  return <EditQuestionForm examId={examId} examTitle={exam.title} question={question} />;
+  return (
+    <EditQuestionForm
+      examId={examId}
+      examTitle={exam.title}
+      question={question}
+    />
+  );
 }
