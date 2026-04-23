@@ -18,6 +18,7 @@ export const profileSchema = z.object({
       /^01[0125][0-9]{8}$/,
       "Invalid Egyptian phone number (e.g. 01012345678)",
     ),
+  profilePhoto: z.string().nullable().optional(),
 });
 
 export type ProfileFormValues = z.infer<typeof profileSchema>;

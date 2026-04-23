@@ -1,6 +1,6 @@
 "use client";
 
-import { Edit3 } from "lucide-react";
+import { Edit3, Trash2, User } from "lucide-react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { profileSchema, ProfileFormValues } from "../_schema/profile.schema";
@@ -9,10 +9,14 @@ import {
   getProfile,
   updateProfile,
 } from "../../_actions/userProfile";
+import { uploadProfilePhoto } from "../_actions/upload-profile-photo";
 import { toast } from "sonner";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { signOut, useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
+import { useRef, useState } from "react";
+import { ImageUploadField } from "./image-upload-field";
+import avatar from "../../../../../public/assets/user-photo.jpg";
 import "intl-tel-input/styles";
 
 // intl-tel-input uses browser APIs — must be loaded client-side only
@@ -23,6 +27,21 @@ const IntlTelInput = dynamic(() => import("intl-tel-input/reactWithUtils"), {
 export default function ProfileTab() {
   const { data: session, update } = useSession();
   const queryClient = useQueryClient();
+  const [isUploading, setIsUploading] = useState(false);
+
+  const { data: userData } = useQuery({
+    queryKey: ["user"],
+    queryFn: getProfile,
+  });
+
+  const user = userData?.payload?.user ?? {
+    firstName: session?.user?.firstName || "firstName",
+    lastName: session?.user?.lastName || "lastName",
+    phone: session?.user?.phone || "+20123456789",
+    username: session?.user?.username || "username",
+    email: session?.user?.email || "email",
+    profilePhoto: session?.user?.image || null,
+  };
 
   const { mutate: deleteUser, isPending: isDeleting } = useMutation({
     mutationFn: deleteAccount,
@@ -32,10 +51,8 @@ export default function ProfileTab() {
         duration: 3000,
       });
       queryClient.clear();
-      // Sign out clears the NextAuth client session state and redirects to /login
       signOut({ callbackUrl: "/login" });
     },
-
     onError: (error: Error) => {
       toast.error(error?.message || "Failed to delete account.", {
         position: "top-right",
@@ -44,56 +61,51 @@ export default function ProfileTab() {
     },
   });
 
-  const { data: userData } = useQuery({
-    queryKey: ["user"],
-    queryFn: getProfile,
-  });
-  const user = userData?.payload?.user ?? {
-    firstName: session?.user?.firstName || "firstName",
-    lastName: session?.user?.lastName || "lastName",
-    phone: session?.user?.phone || "+20123456789",
-    username: session?.user?.username || "username",
-    email: session?.user?.email || "email",
-  };
   const {
     register,
     setValue,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting, isDirty },
   } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
-    // `values` (not defaultValues) is reactive — updates the form whenever query data changes
     values: {
       firstName: user?.firstName || "firstName",
       lastName: user?.lastName || "lastName",
-      // Replace +20 with 0 if present: +201016832985 → 01016832985
       phone: (user?.phone || "").replace(/^\+20/, "0"),
+      profilePhoto: user?.profilePhoto || null,
     },
     mode: "onBlur",
   });
 
+  const profilePhoto = watch("profilePhoto");
+
   const onSubmit: SubmitHandler<ProfileFormValues> = async (values) => {
+    await performUpdate({
+      firstName: values.firstName,
+      lastName: values.lastName,
+      phone: values.phone,
+      profilePhoto: values.profilePhoto,
+    });
+  };
+
+  const performUpdate = async (data: any) => {
     try {
-      const response = await updateProfile({
-        firstName: values.firstName,
-        lastName: values.lastName,
-        phone: values.phone, // already in 01XXXXXXXXX format
-      });
-      // console.log(response);
+      const response = await updateProfile(data);
+
       if (response?.status === true) {
         toast.success(response?.message || "Profile updated successfully!", {
           position: "top-right",
           duration: 3000,
         });
 
-        // Push the new values into the NextAuth JWT (triggers useSession to update everywhere)
         await update({
-          firstName: values.firstName,
-          lastName: values.lastName,
-          phone: "+20" + values.phone.replace(/^0/, ""),
+          firstName: data.firstName,
+          lastName: data.lastName,
+          phone: "+20" + (data.phone || "").replace(/^0/, ""),
+          image: data.profilePhoto,
         });
-        // Refresh the React Query cache so sidebar & profile-tab show fresh API data
-        // queryClient.invalidateQueries({ queryKey: ["user"] });
+
         queryClient.refetchQueries({ queryKey: ["user"] });
       } else {
         toast.error(response?.message || "Failed to update profile.", {
@@ -109,11 +121,52 @@ export default function ProfileTab() {
     }
   };
 
+  const handlePhotoChange = (url: string | null) => {
+    setValue("profilePhoto", url || "", {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  };
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col gap-8 max-w-2xl"
+      className="flex flex-col gap-8 w-full"
     >
+      {/* Profile Photo Section */}
+      {/* Profile Photo Section */}
+      <div className="flex flex-col items-center sm:items-start gap-4 p-4 bg-gray-50/50 rounded-lg border border-dashed border-gray-200">
+        <div className="flex w-full items-center justify-between">
+          <label className="text-sm font-semibold text-gray-700">
+            Profile photo
+          </label>
+          <button
+            type="button"
+            onClick={() => {
+              const input = document.querySelector(
+                'input[type="file"]',
+              ) as HTMLInputElement;
+              input?.click();
+            }}
+            className="text-sm font-semibold text-blue-600 hover:underline"
+          >
+            Change photo
+          </button>
+        </div>
+        <div className="flex flex-col justify-center items-center gap-3 w-full ">
+          <ImageUploadField
+            value={profilePhoto || ""}
+            error={errors.profilePhoto?.message}
+            onChange={handlePhotoChange}
+            onRemove={() => handlePhotoChange(null)}
+            onUploadingChange={(uploading) => setIsUploading(uploading)}
+          />
+          <p className="text-xs text-gray-400 text-center">
+            JPG, GIF or PNG. Max size of 5MB.
+          </p>
+        </div>
+      </div>
+
       {/* Name Row */}
       <div className="flex flex-col md:flex-row gap-6">
         <div className="flex flex-col gap-2 flex-1">
@@ -152,7 +205,7 @@ export default function ProfileTab() {
         </div>
       </div>
 
-      {/* Username (read-only, not part of form) */}
+      {/* Username (read-only) */}
       <div className="flex flex-col gap-2">
         <label className="text-sm font-semibold text-gray-700">Username</label>
         <input
@@ -164,7 +217,7 @@ export default function ProfileTab() {
         />
       </div>
 
-      {/* Email (read-only, not part of form) */}
+      {/* Email (read-only) */}
       <div className="flex flex-col gap-2 relative">
         <div className="flex justify-between items-center">
           <label className="text-sm font-semibold text-gray-700">Email</label>

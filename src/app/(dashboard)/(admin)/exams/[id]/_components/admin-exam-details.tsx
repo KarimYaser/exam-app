@@ -150,7 +150,7 @@ export default function AdminExamDetails({
             className={`inline-flex items-center gap-1 rounded ${exam.immutable ? "bg-gray-100 text-gray-500" : "bg-yellow-500 text-white"} px-3 py-1.5 text-xs`}
           >
             {exam.immutable ? (
-              <CircleOff className="h-3.5 w-3.5 text-red-500" />
+              <CircleOff className="h-3.5 w-3.5 text-gray-500" />
             ) : (
               <Pencil className="h-3.5 w-3.5" />
             )}

@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { CheckCheck, Pencil, Trash2 } from "lucide-react";
+import { Ban, ExternalLink, PencilLine, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import {
   deleteQuestionById,
   type QuestionPayload,
@@ -18,18 +17,6 @@ type QuestionDetailsProps = {
   question: QuestionPayload;
 };
 
-type ExtendedAnswer = QuestionPayload["answers"][number] & {
-  correct?: boolean;
-};
-
-type ExtendedQuestion = QuestionPayload & {
-  correctAnswerId?: string;
-  correctAnswer?: {
-    id?: string;
-  };
-  answers: ExtendedAnswer[];
-};
-
 export default function QuestionDetails({
   examId,
   examTitle,
@@ -38,9 +25,6 @@ export default function QuestionDetails({
   const router = useRouter();
   const queryClient = useQueryClient();
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
-  const normalizedQuestion = question as ExtendedQuestion;
-  const fallbackCorrectAnswerId =
-    normalizedQuestion.correctAnswerId || normalizedQuestion.correctAnswer?.id;
 
   const { mutate: removeQuestion, isPending: isDeleting } = useMutation({
     mutationFn: () => deleteQuestionById(question.id, examId),
@@ -51,7 +35,6 @@ export default function QuestionDetails({
       setConfirmDeleteOpen(false);
       queryClient.invalidateQueries({ queryKey: ["admin-exams"] });
       router.push(`/exams/${examId}`);
-      router.refresh();
     },
     onError: (error: Error) => {
       toast.error(error?.message || "Failed to delete question", {
@@ -61,109 +44,107 @@ export default function QuestionDetails({
   });
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-[#f4f5f7] font-mono text-[13px]">
-      <div className="flex shrink-0 items-center gap-2 border-b border-gray-200 bg-white px-4 py-3 text-xs sm:px-6">
+    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-[#F9FAFB] text-[13px]">
+      {/* Breadcrumbs */}
+      <div className="flex shrink-0 items-center gap-2 border-b border-gray-100 bg-white px-6 py-4 font-mono text-[12px] text-gray-400 sm:px-12">
         <span
-          className="cursor-pointer text-gray-500 hover:underline"
+          className="cursor-pointer hover:text-gray-500 hover:underline"
           onClick={() => router.push("/exams")}
         >
           Exams
         </span>
-        <span className="text-gray-300">/</span>
+        <span>/</span>
         <span
-          className="cursor-pointer text-gray-500 hover:underline"
+          className="cursor-pointer hover:text-gray-500 hover:underline"
           onClick={() => router.push(`/exams/${examId}`)}
         >
           {examTitle}
         </span>
-        <span className="text-gray-300">/</span>
-        <span className="font-semibold text-[#155DFC]">Question Details</span>
+        <span>/</span>
+        <span
+          className="cursor-pointer hover:text-gray-500 hover:underline"
+          onClick={() => router.push(`/exams/${examId}`)}
+        >
+          Questions
+        </span>
+        <span>/</span>
+        <span className="text-[#155DFC]">{question.text}</span>
       </div>
 
-      <div className="mb-4 flex flex-col gap-3 border-b border-gray-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-gray-800">
-            Question Details
+      {/* Header */}
+      <div className="flex shrink-0 flex-col items-start justify-between gap-4 border-b border-gray-100 bg-white px-6 py-6 sm:flex-row sm:items-center sm:px-12">
+        <div className="space-y-1">
+          <h1 className="text-xl font-bold tracking-tight text-[#101828]">
+            {question.text}
           </h1>
-          <p className="text-sm text-gray-500">Exam: {examTitle}</p>
+          <div className="flex items-center gap-1 text-sm text-gray-400">
+            <span>Exam:</span>
+            <span
+              className="cursor-pointer border-b border-gray-200 hover:text-gray-600"
+              onClick={() => router.push(`/exams/${examId}`)}
+            >
+              {examTitle}
+            </span>
+            <ExternalLink className="h-3.5 w-3.5" />
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            className="rounded-none bg-[#155DFC] text-white hover:bg-blue-700"
+        <div className="flex items-center gap-3">
+          <button
+            disabled
+            className="flex items-center gap-2 bg-[#EDF0F2] px-2.5 py-1.5 text-sm font-medium text-[#4F5B67] opacity-80"
+          >
+            <Ban className="h-4 w-4" />
+            Immutable
+          </button>
+          <button
             onClick={() =>
               router.push(`/exams/${examId}/questions/${question.id}/edit`)
             }
+            className="flex items-center gap-2 bg-[#155DFC] px-2.5 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
           >
-            <Pencil className="h-4 w-4" />
-            Edit Question
-          </Button>
-          <Button
-            type="button"
-            variant="destructive"
-            className="rounded-none bg-red-500 text-white hover:bg-red-600"
+            <PencilLine className="h-4 w-4" />
+            Edit
+          </button>
+          <button
             onClick={() => setConfirmDeleteOpen(true)}
+            className="flex items-center gap-2 bg-[#D92D20] px-2.5 py-1.5 text-sm font-medium text-white hover:bg-red-700"
           >
             <Trash2 className="h-4 w-4" />
-            Delete Question
-          </Button>
+            Delete
+          </button>
         </div>
       </div>
 
-      <div className="px-4 py-4 sm:px-6">
-        <div className="overflow-hidden rounded border border-gray-200 bg-white shadow-sm">
-          <div className="bg-[#155DFC] px-4 py-2.5 text-sm font-semibold text-white">
-            Question Information
-          </div>
-
-          <div className="space-y-4 p-4">
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                Question
+      {/* Main Content Card */}
+      <div className="px-2 py-2 sm:px-12 sm:py-6">
+        <div className="bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.1)]">
+          <div className="space-y-8">
+            <div className="space-y-2">
+              <label className="block font-mono text-[12px] uppercase tracking-wider text-[#9FA7B0]">
+                Headline
               </label>
-              <div className="rounded border border-gray-200 bg-gray-50 px-3 py-3 text-base font-semibold text-gray-800">
+              <div className="font-mono text-sm leading-relaxed text-[#101828]">
                 {question.text}
               </div>
             </div>
 
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-700">
+            <div className="space-y-2">
+              <label className="block font-mono text-[12px] uppercase tracking-wider text-[#9FA7B0]">
+                Exam
+              </label>
+              <div className="flex items-center gap-1 font-mono text-sm text-[#101828]">
+                {examTitle}
+                <ExternalLink className="h-4 w-4 text-gray-400" />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block font-mono text-[12px] uppercase tracking-wider text-[#9FA7B0]">
                 Answers
               </label>
-              <div className="space-y-2">
-                {normalizedQuestion.answers.map((answer, index) => {
-                  const answerWithFallback = answer as ExtendedAnswer;
-                  const isCorrect =
-                    Boolean(answer.isCorrect) ||
-                    Boolean(answerWithFallback.correct) ||
-                    (fallbackCorrectAnswerId
-                      ? answer.id === fallbackCorrectAnswerId
-                      : false);
-                  return (
-                    <div
-                      key={answer.id}
-                      className={`flex items-center justify-between rounded border px-3 py-2 text-sm ${
-                        isCorrect
-                          ? "border-green-300 bg-green-50 text-green-900"
-                          : "border-gray-200 bg-gray-50 text-gray-700"
-                      }`}
-                    >
-                      <span>
-                        <span className="mr-2 font-semibold text-gray-500">
-                          {index + 1}.
-                        </span>
-                        {answer.text}
-                      </span>
-                      {isCorrect ? (
-                        <span className="inline-flex items-center gap-1 rounded bg-green-100 px-2 py-1 text-xs font-semibold text-green-700">
-                          <CheckCheck className="h-3.5 w-3.5" />
-                          Correct Answer
-                        </span>
-                      ) : null}
-                    </div>
-                  );
-                })}
+              <div className="font-mono text-sm text-[#101828]">
+                {question.answers.length}
               </div>
             </div>
           </div>

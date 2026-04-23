@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   BookOpen,
   EllipsisVertical,
@@ -11,14 +11,16 @@ import {
   LogOut,
   Menu,
   UserRound,
+  Edit3,
   X,
+  User,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import elevateLogo from "../../../../../public/assets/logo2.png";
 import avatar from "../../../../../public/assets/user-photo.jpg";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getProfile } from "../../_actions/userProfile";
 import {
   DropdownMenu,
@@ -40,18 +42,25 @@ const navItems = [
 
 function AdminSidebarContent() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const { data: session } = useSession();
+  const queryClient = useQueryClient();
   const { data: userData } = useQuery({
     queryKey: ["user"],
     queryFn: getProfile,
     retry: 1,
   });
 
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const user = userData?.payload?.user ?? {
     firstName: session?.user?.firstName || "Firstname",
     email: session?.user?.email || "user-email@example.com",
+    profilePhoto: session?.user?.profilePhoto || null,
   };
 
   const handleLogout = async () => {
@@ -59,7 +68,9 @@ function AdminSidebarContent() {
     setTimeout(async () => {
       await signOut({ redirect: false });
       router.push("/login");
-      router.refresh();
+      queryClient.removeQueries({
+        queryKey: ["user"],
+      }); /* this to clean the cache for user */
     }, 1500);
   };
 
@@ -156,8 +167,21 @@ function AdminSidebarContent() {
         </nav>
 
         <div className="border-t border-slate-800 px-3 py-4 flex items-center gap-3">
-          <div className="h-11 w-11 shrink-0 overflow-hidden rounded bg-slate-800">
-            <Image src={avatar} alt="" width={44} height={44} />
+          <div className="h-11 w-11 shrink-0 overflow-hidden rounded-full border border-slate-700 bg-slate-800 shadow-sm">
+            {isMounted && user?.profilePhoto ? (
+              <Image
+                src={user.profilePhoto}
+                alt="User Profile"
+                width={44}
+                height={44}
+                className="w-full h-full object-cover"
+                unoptimized
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-[#E4E6EB] text-[#8A8D91]">
+                <User className="h-6 w-6" strokeWidth={1.5} />
+              </div>
+            )}
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-slate-100 truncate">
@@ -186,6 +210,16 @@ function AdminSidebarContent() {
                 >
                   <UserRound className="mr-2 h-4 w-4" />
                   Account
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setIsOpen(false);
+                    router.push("/settings");
+                  }}
+                  className="cursor-pointer hover:bg-gray-900/50 "
+                >
+                  <Edit3 className="mr-2 h-4 w-4" />
+                  Change Photo
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
