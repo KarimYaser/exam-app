@@ -1,4 +1,4 @@
-import { MoreHorizontal, ExternalLink, Trash2 } from "lucide-react";
+import { MoreHorizontal, ExternalLink, Trash2, Eye } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,15 +8,20 @@ import {
 import { cn } from "@/lib/utils";
 import type { AuditLog } from "../_actions/audit.actions";
 
+import { useRouter } from "next/navigation";
+
 type AdminAuditCardProps = {
   log: AuditLog;
   onDelete: (id: string) => void;
+  isSuperAdminUser: boolean;
 };
 
 export default function AdminAuditCard({
   log,
   onDelete,
+  isSuperAdminUser,
 }: AdminAuditCardProps) {
+  const router = useRouter();
   const date = new Date(log.createdAt);
 
   const timeStr = date.toLocaleTimeString("en-US", {
@@ -117,12 +122,21 @@ export default function AdminAuditCard({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-32 font-mono">
             <DropdownMenuItem
-              onClick={() => onDelete(log.id)}
-              className="cursor-pointer text-red-600 focus:text-red-700 focus:bg-red-50"
+              className="cursor-pointer"
+              onClick={() => router.push(`/audit/${log.id}`)}
             >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Delete
+              <Eye className="mr-2 h-4 w-4 text-emerald-600 " />
+              View
             </DropdownMenuItem>
+            {isSuperAdminUser && (
+              <DropdownMenuItem
+                onClick={() => onDelete(log.id)}
+                className="cursor-pointer text-red-600 focus:text-red-700 focus:bg-red-50"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

@@ -23,8 +23,9 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import useAdminAuditLogs from "../_hooks/use-admin-audit-logs";
 import AdminAuditCard from "./admin-audit-card";
+import ConfirmDeleteModal from "@/components/shared/confirm-delete-modal";
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 20;
 
 type SortKey =
   | "actorUsername-asc"
@@ -34,10 +35,15 @@ type SortKey =
   | "newest"
   | "oldest";
 
-export default function AdminAuditDashboard() {
+export default function AdminAuditDashboard({
+  isSuperAdminUser,
+}: {
+  isSuperAdminUser: boolean;
+}) {
   const router = useRouter();
   const [page, setPage] = useState<number>(1);
   const [filtersOpen, setFiltersOpen] = useState<boolean>(true);
+  const [showClearModal, setShowClearModal] = useState(false);
 
   // Filter states
   const [category, setCategory] = useState<string>("all");
@@ -59,44 +65,64 @@ export default function AdminAuditDashboard() {
   }, [sort]);
 
   const isRoleFiltered = actorRole && actorRole !== "all";
+  const isAlphabeticalSort = sort.startsWith("actorUsername");
+  const isClientPagingNeeded = isRoleFiltered || isAlphabeticalSort;
 
   const { data, isLoading, isError, clearLogs, isClearing, deleteLog } =
     useAdminAuditLogs({
-      page: isRoleFiltered ? 1 : page,
-      limit: isRoleFiltered ? 100 : PAGE_SIZE,
+      page: isClientPagingNeeded ? 1 : page,
+      limit: isClientPagingNeeded ? 100 : PAGE_SIZE,
       category,
       action,
-      sortBy,
+      // Only send 'createdAt' to the backend to avoid 500 errors on unsupported fields
+      sortBy: sortBy === "createdAt" ? "createdAt" : undefined,
       sortOrder,
     });
-
-  // Client-side role filter — depends on data directly so actorRole changes always recompute
+  // Client-side role filter & sort — ensures consistency across all fields
   const filteredLogs = useMemo(() => {
-    const all = data?.payload?.data ?? [];
-    if (!isRoleFiltered) return all;
-    return all.filter(
-      (log) => log.actorRole.toUpperCase() === actorRole.toUpperCase(),
-    );
-  }, [data, actorRole, isRoleFiltered]);
+    let all = data?.payload?.data ?? [];
+    // console.log(all);
 
-  // When role-filtered: paginate client-side; otherwise API already paginates
+    // 1. Filter by role
+    if (isRoleFiltered) {
+      all = all.filter(
+        (log) => log.actorRole.toUpperCase() === actorRole.toUpperCase(),
+      );
+    }
+
+    // 2. Apply sorting
+    return [...all].sort((a, b) => {
+      const valA = (a[sortBy as keyof typeof a] || "").toString().toLowerCase();
+      const valB = (b[sortBy as keyof typeof b] || "").toString().toLowerCase();
+
+      if (sortOrder === "asc") {
+        return valA.localeCompare(valB);
+      } else {
+        return valB.localeCompare(valA);
+      }
+    });
+  }, [data, actorRole, isRoleFiltered, sortBy, sortOrder]);
+
+  // When client-paging needed: paginate client-side; otherwise API already paginates
   const logs = useMemo(() => {
-    if (!isRoleFiltered) return filteredLogs;
+    if (!isClientPagingNeeded) return filteredLogs;
     const start = (page - 1) * PAGE_SIZE;
     return filteredLogs.slice(start, start + PAGE_SIZE);
-  }, [filteredLogs, isRoleFiltered, page]);
+  }, [filteredLogs, isClientPagingNeeded, page]);
 
   const metadata = data?.payload?.metadata;
   const serverTotal = metadata?.total ?? 0;
-  const filteredTotal = isRoleFiltered ? filteredLogs.length : serverTotal;
+  const filteredTotal = isClientPagingNeeded
+    ? filteredLogs.length
+    : serverTotal;
   const total = filteredTotal;
   const pageCount = Math.max(1, Math.ceil(filteredTotal / PAGE_SIZE));
 
   const rangeFrom = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
   const rangeTo = Math.min(page * PAGE_SIZE, total);
 
-  const categories = ["DIPLOMA", "EXAM", "QUESTION", "USER", "AUTH"];
-  const actions = ["CREATE", "UPDATE", "DELETE", "LOGIN", "LOGOUT"];
+  const categories = ["DIPLOMA", "EXAM", "QUESTION", "USER"];
+  const actions = ["CREATE", "UPDATE", "DELETE"];
   const roles = [
     { value: "USER", label: "User" },
     { value: "ADMIN", label: "Admin" },
@@ -111,9 +137,9 @@ export default function AdminAuditDashboard() {
   };
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col bg-[#f4f5f7] font-mono text-[13px]">
+    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-[#f4f5f7] font-mono text-[13px]">
       {/* breadcrumb header */}
-      <div className="flex shrink-0 items-center gap-2 border-b border-gray-200 bg-white px-6 py-3">
+      <div className="flex shrink-0 items-center gap-2 border-b border-gray-100 bg-white px-4 py-2 font-mono text-[12px] text-gray-400 sm:px-12">
         <span className="text-xs text-gray-500">Audit Log</span>
       </div>
 
@@ -123,7 +149,7 @@ export default function AdminAuditDashboard() {
           <span className="text-xs text-gray-500 font-bold px-3 py-2 ">
             {total === 0
               ? "0 results"
-              : `${rangeFrom} – ${rangeTo} of ${total}`}
+              : `${rangeFrom} - ${rangeTo} of ${total}`}
           </span>
           <div className="flex items-center  text-gray-400 border-t border-b border-gray-100">
             <Button
@@ -151,25 +177,18 @@ export default function AdminAuditDashboard() {
             </Button>
           </div>
         </div>
-
-        <Button
-          type="button"
-          variant="destructive"
-          className="bg-red-500 hover:bg-red-600 text-white h-10 min-w-36 px-4 rounded-none text-sm flex items-center gap-2 transition-all  disabled:opacity-50"
-          onClick={() => {
-            if (
-              confirm(
-                "Are you sure you want to permanently clear ALL audit logs?",
-              )
-            ) {
-              clearLogs();
-            }
-          }}
-          disabled={isClearing || total === 0}
-        >
-          <Eraser className="h-4 w-4" />
-          Clear All Logs
-        </Button>
+        {isSuperAdminUser && (
+          <Button
+            type="button"
+            variant="destructive"
+            className="bg-red-500 hover:bg-red-600 text-white h-10 max-w-36 px-1 rounded-none text-xs flex items-center gap-2 transition-all disabled:opacity-50"
+            onClick={() => setShowClearModal(true)}
+            disabled={isClearing || total === 0}
+          >
+            <Eraser className="h-4 w-4" />
+            Clear All Logs
+          </Button>
+        )}
       </div>
       <div className="flex min-h-0 flex-1 flex-col px-4 py-4 sm:px-6">
         {/* Search & Filters */}
@@ -206,7 +225,7 @@ export default function AdminAuditDashboard() {
                     <option value="" disabled>
                       Category
                     </option>
-                    <option value="all">Category</option>
+                    <option value="all">All Categories</option>
                     {categories.map((c) => (
                       <option key={c} value={c}>
                         {c}
@@ -226,7 +245,7 @@ export default function AdminAuditDashboard() {
                     <option value="" disabled>
                       Action
                     </option>
-                    <option value="all">Action</option>
+                    <option value="all">All Actions</option>
                     {actions.map((a) => (
                       <option key={a} value={a}>
                         {a}
@@ -290,12 +309,17 @@ export default function AdminAuditDashboard() {
                   <span>Sort</span>
                   <ArrowDownAZ className="h-3.5 w-3.5" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48 font-mono">
+                <DropdownMenuContent
+                  align="end"
+                  className="w-48 font-mono bg-white"
+                >
                   <DropdownMenuItem
                     onClick={() => setSort("newest")}
-                    className={cn(
-                      sort === "newest" && "bg-blue-50 text-blue-700 font-bold",
-                    )}
+                    className={
+                      sort === "newest"
+                        ? "bg-blue-50 text-blue-700 font-bold"
+                        : ""
+                    }
                   >
                     <ArrowDown className="mr-2 h-4 w-4" /> Newest (desc)
                   </DropdownMenuItem>
@@ -361,12 +385,29 @@ export default function AdminAuditDashboard() {
               </div>
             ) : (
               logs.map((log) => (
-                <AdminAuditCard key={log.id} log={log} onDelete={deleteLog} />
+                <AdminAuditCard
+                  key={log.id}
+                  log={log}
+                  onDelete={deleteLog}
+                  isSuperAdminUser={isSuperAdminUser}
+                />
               ))
             )}
           </div>
         </div>
       </div>
+      <ConfirmDeleteModal
+        open={showClearModal}
+        onCancel={() => setShowClearModal(false)}
+        onConfirm={async () => {
+          await clearLogs();
+          setShowClearModal(false);
+        }}
+        isPending={isClearing}
+        title="Clear All Audit Logs"
+        description="Are you sure you want to permanently delete ALL audit logs? This action cannot be undone."
+        deleteLabel="Clear All"
+      />
     </div>
   );
 }
