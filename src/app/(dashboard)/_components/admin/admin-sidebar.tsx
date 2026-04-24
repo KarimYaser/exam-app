@@ -214,16 +214,6 @@ function AdminSidebarContent() {
                 <DropdownMenuItem
                   onClick={() => {
                     setIsOpen(false);
-                    router.push("/settings");
-                  }}
-                  className="cursor-pointer hover:bg-gray-900/50 "
-                >
-                  <Edit3 className="mr-2 h-4 w-4" />
-                  Change Photo
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    setIsOpen(false);
                     router.push("/");
                   }}
                   className="cursor-pointer hover:bg-gray-900/50"

@@ -5,6 +5,7 @@ import { getAdminExams } from "../../_actions/exams.actions";
 import EditExamForm from "./_components/edit-exam-form";
 import isAdmin from "@/lib/util/is-admin";
 import Unauthorized from "@/app/unauthorized";
+import isSuperAdmin from "@/lib/util/is-super-admin";
 
 interface EditExamPageProps {
   params: Promise<{ id: string; edit: string }>;
@@ -33,15 +34,13 @@ export default async function ExamEditPage({ params }: EditExamPageProps) {
     [];
   const questions = questionsRaw.map((q) => ({ id: q.id, text: q.text }));
   const isAdminUser = await isAdmin();
-
+  const isSuperAdminUser = await isSuperAdmin();
+  if (!isAdminUser && !isSuperAdminUser) {
+    <Unauthorized />;
+  }
   return (
     <>
-      {isAdminUser ? (
-        <EditExamForm exam={exam} diplomas={diplomas} questions={questions} />
-      ) : (
-        <Unauthorized />
-      )}
-      ;
+      <EditExamForm exam={exam} diplomas={diplomas} questions={questions} />;
     </>
   );
   // return <EditExamForm exam={exam} diplomas={diplomas} questions={questions} />;

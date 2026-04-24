@@ -3,6 +3,7 @@ import isAdmin from "@/lib/util/is-admin";
 import Unauthorized from "@/app/unauthorized";
 import { getAdminExams } from "../../../../_actions/exams.actions";
 import BulkAddForm from "./_components/bulk-add-form";
+import isSuperAdmin from "@/lib/util/is-super-admin";
 
 interface BulkAddQuestionsPageProps {
   params: Promise<{ id: string }>;
@@ -20,16 +21,14 @@ export default async function BulkAddQuestionsPage({
   if (!exam) {
     notFound();
   }
-
-  const isAdminUser = await isAdmin();
-
+  const isAdminUser= await isAdmin()
+  const isSuperAdminUser =await isSuperAdmin()
+ if(!isAdminUser && !isSuperAdminUser){
+<Unauthorized />
+ }
   return (
     <>
-      {isAdminUser ? (
         <BulkAddForm examId={examId} examTitle={exam.title} />
-      ) : (
-        <Unauthorized />
-      )}
     </>
   );
 }

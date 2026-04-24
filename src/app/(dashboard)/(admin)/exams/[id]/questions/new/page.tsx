@@ -3,6 +3,7 @@ import isAdmin from "@/lib/util/is-admin";
 import Unauthorized from "@/app/unauthorized";
 import { getAdminExams } from "../../../_actions/exams.actions";
 import CreateQuestionForm from "./_components/create-question-form";
+import isSuperAdmin from "@/lib/util/is-super-admin";
 
 interface AddQuestionPageProps {
   params: Promise<{ id: string }>;
@@ -18,10 +19,12 @@ export default async function AddQuestionPage({ params }: AddQuestionPageProps) 
   if (!exam) {
     notFound();
   }
-const isAdminUser = await isAdmin();
+  const isAdminUser= await isAdmin()
+  const isSuperAdminUser =await isSuperAdmin()
+ if(!isAdminUser && !isSuperAdminUser){
+<Unauthorized />
+ }
   return <>
-  {isAdminUser? 
-  <CreateQuestionForm examId={examId} examTitle={exam.title} />: <Unauthorized />
-  }
+  <CreateQuestionForm examId={examId} examTitle={exam.title} />
   </>
 }

@@ -198,16 +198,7 @@ export default function DashboardSidebar() {
                   <UserRound className="mr-2 h-4 w-4" />
                   <span>Account</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    setIsOpen(false);
-                    router.push("/settings");
-                  }}
-                  className="cursor-pointer"
-                >
-                  <Edit3 className="mr-2 h-4 w-4" />
-                  <span>Change Photo</span>
-                </DropdownMenuItem>
+                
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem

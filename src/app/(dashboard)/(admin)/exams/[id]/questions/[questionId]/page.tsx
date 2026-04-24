@@ -4,6 +4,7 @@ import Unauthorized from "@/app/unauthorized";
 import { getAdminExams } from "../../../_actions/exams.actions";
 import { getQuestionById } from "@/app/(dashboard)/(admin)/exams/[id]/questions/_actions/questions.actions";
 import QuestionDetails from "./_components/question-details";
+import isSuperAdmin from "@/lib/util/is-super-admin";
 
 interface QuestionDetailsPageProps {
   params: Promise<{ id: string; questionId: string }>;
@@ -12,11 +13,12 @@ interface QuestionDetailsPageProps {
 export default async function QuestionDetailsPage({
   params,
 }: QuestionDetailsPageProps) {
-  const isAdminUser = await isAdmin();
-  if (!isAdminUser) {
-    return <Unauthorized />;
-  }
-
+ 
+  const isAdminUser= await isAdmin()
+  const isSuperAdminUser =await isSuperAdmin()
+ if(!isAdminUser && !isSuperAdminUser){
+<Unauthorized />
+ }
   const resolvedParams = await params;
   const examId = resolvedParams.id;
   const questionId = resolvedParams.questionId;

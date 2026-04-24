@@ -22,7 +22,7 @@ function SettingsLayoutContent({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-col h-full bg-gray-50 min-h-screen font-mono">
       {/* Breadcrumb Header */}
-      <div className="px-6 py-3 border-b border-gray-200 bg-white flex items-center gap-2">
+      <div className="flex shrink-0 items-center gap-2 border-b border-gray-100 bg-white px-4 py-2 font-mono text-[12px] text-gray-400 sm:px-12">
         <span
           className="text-xs text-gray-400 cursor-pointer hover:underline"
           onClick={() => router.push("/")}

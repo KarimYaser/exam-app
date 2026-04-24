@@ -4,6 +4,7 @@ import Unauthorized from "@/app/unauthorized";
 import { getAdminExams } from "../../../../_actions/exams.actions";
 import { getQuestionById } from "@/app/(dashboard)/(admin)/exams/[id]/questions/_actions/questions.actions";
 import EditQuestionForm from "./_components/edit-question-form";
+import isSuperAdmin from "@/lib/util/is-super-admin";
 
 interface EditQuestionPageProps {
   params: Promise<{ id: string; questionId: string }>;
@@ -12,10 +13,12 @@ interface EditQuestionPageProps {
 export default async function EditQuestionPage({
   params,
 }: EditQuestionPageProps) {
-  const isAdminUser = await isAdmin();
-  if (!isAdminUser) {
-    return <Unauthorized />;
-  }
+  
+  const isAdminUser= await isAdmin()
+  const isSuperAdminUser =await isSuperAdmin()
+ if(!isAdminUser && !isSuperAdminUser){
+<Unauthorized />
+ }
 
   const resolvedParams = await params;
   const examId = resolvedParams.id;

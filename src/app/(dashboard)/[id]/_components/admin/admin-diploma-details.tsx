@@ -52,7 +52,7 @@ export default function DiplomaDetails({ diploma }: { diploma: Diploma }) {
 
         <div className="flex flex-wrap items-center gap-2">
           <span
-            className={`inline-flex items-center gap-1 rounded px-3 py-1.5 text-xs ${diploma?.immutable ? "bg-gray-100 text-gray-700" : "bg-yellow-100 text-yellow-700"}`}
+            className={`inline-flex items-center gap-1 rounded px-3 py-1.5 text-xs ${diploma?.immutable ? "bg-gray-100 text-gray-700" : "bg-yellow-500 text-white"}`}
           >
             {diploma?.immutable ? (
               <Ban className="h-3.5 w-3.5" />

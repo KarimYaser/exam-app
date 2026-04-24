@@ -4,6 +4,7 @@ import { getAdminExams } from "../_actions/exams.actions";
 import { getExamQuestions } from "./questions/_actions/questions.actions";
 import isAdmin from "@/lib/util/is-admin";
 import Unauthorized from "@/app/unauthorized";
+import isSuperAdmin from "@/lib/util/is-super-admin";
 
 interface ExamDetailsPageProps {
   params: Promise<{ id: string }>;
@@ -24,14 +25,16 @@ export default async function ExamDetailsPage({
     questionsResponse?.payload?.data ??
     [];
   const isAdminUser = await isAdmin();
+  const isSuperAdminUser = await isSuperAdmin();
+  if (!isAdminUser && !isSuperAdminUser) {
+    return <Unauthorized />;
+  }
+  if (!exam) {
+    notFound();
+  }
   return (
     <>
-      {isAdminUser ? (
         <AdminExamDetails exam={exam} questions={questions} />
-      ) : (
-        <Unauthorized />
-      )}
-      ;
     </>
   );
 }

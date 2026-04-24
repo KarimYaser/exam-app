@@ -60,6 +60,17 @@ export async function getAuditLogs(
   try {
     const url = new URL(`${baseUrl}/admin/audit-logs`);
 
+    // Add query parameters
+    const searchParams = new URLSearchParams();
+    if (params.page !== undefined) searchParams.set("page", params.page.toString());
+    if (params.limit !== undefined) searchParams.set("limit", params.limit.toString());
+    if (params.category && params.category !== "all") searchParams.set("category", params.category);
+    if (params.action && params.action !== "all") searchParams.set("action", params.action);
+    if (params.actorUserId) searchParams.set("actorUserId", params.actorUserId);
+    if (params.sortBy) searchParams.set("sortBy", params.sortBy);
+    if (params.sortOrder) searchParams.set("sortOrder", params.sortOrder);
+    url.search = searchParams.toString();
+
     const response = await fetch(url.toString(), {
       method: "GET",
       headers: {
@@ -92,7 +103,7 @@ export async function clearAllAuditLogs(): Promise<GenericResponse> {
     });
 
     const payload = (await response.json()) as GenericResponse;
-    revalidateTag("audit-logs");
+    revalidateTag("audit-logs", "/");
     return payload;
   } catch (error) {
     throw error;
@@ -113,7 +124,7 @@ export async function deleteAuditLogById(id: string): Promise<GenericResponse> {
     });
 
     const payload = (await response.json()) as GenericResponse;
-    revalidateTag("audit-logs");
+    revalidateTag("audit-logs", "/");
     return payload;
   } catch (error) {
     throw error;
