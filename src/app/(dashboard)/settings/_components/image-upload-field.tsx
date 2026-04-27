@@ -121,6 +121,12 @@ export function ImageUploadField({
     setPreviewIndex(0);
   }, [value]);
 
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const previewSrc = localPreviewUrl || previewSources[previewIndex] || fallback || "";
   const hasPreview = Boolean(localPreviewUrl || value || fallback);
 
@@ -167,7 +173,7 @@ export function ImageUploadField({
         } ${isUploading ? "opacity-60" : ""}`}
       >
         <div className="relative h-32 w-32 overflow-hidden rounded-full border border-gray-200 bg-gray-50 mx-auto">
-          {previewSrc ? (
+          {mounted && previewSrc ? (
             <Image
               src={previewSrc}
               alt="Profile photo preview"

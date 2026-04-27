@@ -24,19 +24,17 @@ export default async function ExamSessionPage({
   const resolvedSearchParams = await searchParams;
   const { id: diplomaId, examId } = resolvedParams;
   const { diplomaName = "Diploma", examName = "Exam" } = resolvedSearchParams;
-const isAdminUser = await isAdmin()
-const isSuperAdminUser = await isSuperAdmin()
-if (!isAdminUser && !isSuperAdminUser){
-  return (
-    <ExamQuestions
-      examId={examId}
-      diplomaId={diplomaId}
-      diplomaName={decodeURIComponent(diplomaName)}
-      examName={decodeURIComponent(examName)}
-    />
-  );
-}
-return (
-  <Unauthorized/>
-)
+  const isAdminUser = await isAdmin();
+  const isSuperAdminUser = await isSuperAdmin();
+  if (!isAdminUser && !isSuperAdminUser) {
+    return (
+      <ExamQuestions /* user access only */
+        examId={examId}
+        diplomaId={diplomaId}
+        diplomaName={decodeURIComponent(diplomaName)}
+        examName={decodeURIComponent(examName)}
+      />
+    );
+  }
+  return <Unauthorized />;
 }

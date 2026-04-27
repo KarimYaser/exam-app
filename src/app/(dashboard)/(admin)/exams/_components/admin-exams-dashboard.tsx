@@ -106,7 +106,9 @@ export default function AdminExamsDashboard() {
   const pageCount = Math.max(1, Math.ceil(total / ADMIN_EXAMS_PAGE_SIZE));
   const safePage = Math.min(page, pageCount);
   const start = (safePage - 1) * ADMIN_EXAMS_PAGE_SIZE;
-  const pageItems = filtered.slice(start, start + ADMIN_EXAMS_PAGE_SIZE).map(mapExamToCard);
+  const pageItems = filtered
+    .slice(start, start + ADMIN_EXAMS_PAGE_SIZE)
+    .map(mapExamToCard);
   const rangeFrom = total === 0 ? 0 : start + 1;
   const rangeTo = Math.min(start + ADMIN_EXAMS_PAGE_SIZE, total);
 

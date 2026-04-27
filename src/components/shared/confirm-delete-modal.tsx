@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, X } from "lucide-react";
 
 type ConfirmDeleteModalProps = {
   open: boolean;
@@ -26,21 +26,39 @@ export default function ConfirmDeleteModal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/45 p-4">
-      <div className="w-full max-w-md rounded border border-gray-200 bg-white shadow-2xl">
-        <div className="flex items-center gap-2 border-b border-gray-200 px-4 py-3">
-          <AlertTriangle className="h-5 w-5 text-red-500" />
-          <h3 className="text-sm font-semibold text-gray-900">{title}</h3>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/45 backdrop-blur-xs p-4 font-mono">
+      <div className="relative w-full max-w-[500px] border border-gray-200 bg-white shadow-2xl">
+        {/* Close Button */}
+        <button
+          onClick={onCancel}
+          className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 focus:outline-none"
+        >
+          <X className="h-5 w-5" strokeWidth={1.5} />
+        </button>
+
+        <div className="flex flex-col items-center px-8 pb-8 pt-12 text-center">
+          {/* Icon with concentric circles */}
+          <div className="mb-6 flex h-28 w-28 items-center justify-center rounded-full bg-red-50/70">
+            <div className="flex h-[72px] w-[72px] items-center justify-center rounded-full bg-red-100/80">
+              <AlertTriangle
+                className="h-8 w-8 text-[#DE2828]"
+                strokeWidth={1.5}
+              />
+            </div>
+          </div>
+
+          <h3 className="mb-3 text-lg font-bold text-[#DE2828] sm:text-xl">
+            {title}
+          </h3>
+          <p className="text-sm text-gray-500">{description}</p>
         </div>
 
-        <div className="px-4 py-4 text-sm text-gray-600">{description}</div>
-
-        <div className="flex items-center justify-end gap-2 border-t border-gray-200 px-4 py-3">
+        <div className="grid grid-cols-2 gap-4 border-t border-gray-100 bg-[#FAFAFA] p-5 sm:p-6">
           <button
             type="button"
             onClick={onCancel}
             disabled={isPending}
-            className="rounded border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-60"
+            className="flex w-full items-center justify-center bg-[#E5E7EB] py-3 text-[13px] font-bold text-gray-800 transition-colors hover:bg-[#D1D5DB] focus:outline-none disabled:opacity-60"
           >
             {cancelLabel}
           </button>
@@ -48,7 +66,7 @@ export default function ConfirmDeleteModal({
             type="button"
             onClick={onConfirm}
             disabled={isPending}
-            className="rounded bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-60"
+            className="flex w-full items-center justify-center bg-[#DE2828] py-3 text-[13px] font-bold text-white transition-colors hover:bg-red-700 focus:outline-none disabled:opacity-60"
           >
             {isPending ? "Deleting..." : deleteLabel}
           </button>

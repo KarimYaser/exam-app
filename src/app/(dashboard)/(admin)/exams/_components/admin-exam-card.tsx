@@ -53,76 +53,93 @@ export default function AdminExamCard({ exam }: AdminExamCardProps) {
   return (
     <>
       <div
-      role="button"
-      tabIndex={0}
-      onClick={goToDetails}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          goToDetails();
-        }
-      }}
-      className="grid cursor-pointer grid-cols-[56px_1fr_1fr_120px_40px] items-center gap-3 border-b border-gray-100 px-3 py-2 text-sm transition-colors hover:bg-gray-50 sm:gap-4 sm:px-4"
-    >
-      <div className="relative h-12 w-12 overflow-hidden border border-gray-200 bg-gray-100">
-        {exam.image ? (
-          <Image
-            unoptimized
-            src={exam.image}
-            alt={exam.title}
-            fill
-            className="object-cover"
-            sizes="48px"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-slate-700 to-slate-900 text-sm font-bold text-white">
-            {exam.title
-              .split(/\s+/)
-              .slice(0, 2)
-              .map((w) => w[0])
-              .join("")
-              .toUpperCase()
-              .slice(0, 2)}
-          </div>
-        )}
-      </div>
-
-      <p className="truncate font-medium text-gray-800" title={exam.title}>
-        {exam.title}
-      </p>
-
-      <p className="truncate text-gray-600" title={exam.diplomaTitle}>
-        {exam.diplomaTitle}
-      </p>
-
-      <p className="text-gray-700">{exam.questionsCount}</p>
-
-      <div
-        className="flex justify-end"
-        onClick={(e) => e.stopPropagation()}
-        onKeyDown={(e) => e.stopPropagation()}
+        role="button"
+        tabIndex={0}
+        onClick={goToDetails}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            goToDetails();
+          }
+        }}
+        className="grid cursor-pointer grid-cols-[48px_1fr_auto_40px] sm:grid-cols-[56px_1fr_1fr_120px_40px] items-center gap-2 sm:gap-4 border-b border-gray-100 px-3 py-3 text-sm transition-colors hover:bg-gray-50 sm:px-4"
       >
-        <DropdownMenu>
-          <DropdownMenuTrigger className="rounded p-1 text-gray-500 outline-none hover:bg-gray-100 hover:text-gray-800">
-            <MoreHorizontal className="h-4 w-4" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="font-sans bg-white">
-            <DropdownMenuItem className="cursor-pointer" onClick={goToDetails}>
-              View
-            </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer" onClick={goToEdit}>
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="cursor-pointer text-red-600 focus:bg-red-50 focus:text-red-600"
-              disabled={exam.immutable}
-              onClick={() => setConfirmDeleteOpen(true)}
-            >
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+        <div className="relative h-12 w-12 overflow-hidden border border-gray-200 bg-gray-100">
+          {exam.image ? (
+            <Image
+              unoptimized
+              src={exam.image}
+              alt={exam.title}
+              fill
+              className="object-cover"
+              sizes="48px"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-slate-700 to-slate-900 text-sm font-bold text-white">
+              {exam.title
+                .split(/\s+/)
+                .slice(0, 2)
+                .map((w) => w[0])
+                .join("")
+                .toUpperCase()
+                .slice(0, 2)}
+            </div>
+          )}
+        </div>
+
+        <div className="min-w-0">
+          <p className="truncate font-medium text-gray-800" title={exam.title}>
+            {exam.title}
+          </p>
+          <p
+            className="truncate text-gray-500 text-xs mt-0.5 sm:hidden"
+            title={exam.diplomaTitle}
+          >
+            {exam.diplomaTitle}
+          </p>
+        </div>
+
+        <p
+          className="truncate text-gray-600 hidden sm:block"
+          title={exam.diplomaTitle}
+        >
+          {exam.diplomaTitle}
+        </p>
+
+        <p className="text-gray-700 text-xs sm:text-sm text-right sm:text-left whitespace-nowrap">
+          {exam.questionsCount}
+          <span className="sm:hidden text-gray-400 ml-1">Qs</span>
+        </p>
+
+        <div
+          className="flex justify-end"
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
+        >
+          <DropdownMenu>
+            <DropdownMenuTrigger className="text-gray-500 bg-gray-200 p-1.5 hover:text-gray-800 cursor-pointer">
+              <MoreHorizontal className="h-4 w-4" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="font-sans bg-white">
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={goToDetails}
+              >
+                View
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer" onClick={goToEdit}>
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="cursor-pointer text-red-600 focus:bg-red-50 focus:text-red-600"
+                disabled={exam.immutable}
+                onClick={() => setConfirmDeleteOpen(true)}
+              >
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       <ConfirmDeleteModal

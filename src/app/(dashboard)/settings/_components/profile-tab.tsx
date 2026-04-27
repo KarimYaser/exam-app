@@ -18,6 +18,7 @@ import { useRef, useState } from "react";
 import { ImageUploadField } from "./image-upload-field";
 import avatar from "../../../../../public/assets/user-photo.jpg";
 import "intl-tel-input/styles";
+import ChangeEmailModal from "./change-email-modal";
 
 // intl-tel-input uses browser APIs — must be loaded client-side only
 const IntlTelInput = dynamic(() => import("intl-tel-input/reactWithUtils"), {
@@ -28,6 +29,7 @@ export default function ProfileTab() {
   const { data: session, update } = useSession();
   const queryClient = useQueryClient();
   const [isUploading, setIsUploading] = useState(false);
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
   const { data: userData } = useQuery({
     queryKey: ["user"],
@@ -129,6 +131,7 @@ export default function ProfileTab() {
   };
 
   return (
+    <>
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col gap-8 w-full"
@@ -223,6 +226,7 @@ export default function ProfileTab() {
           <label className="text-sm font-semibold text-gray-700">Email</label>
           <button
             type="button"
+            onClick={() => setIsEmailModalOpen(true)}
             className="text-blue-600 text-sm flex items-center gap-1.5 hover:underline pointer-events-auto font-semibold"
           >
             <Edit3 size={14} /> Change
@@ -291,5 +295,11 @@ export default function ProfileTab() {
         </button>
       </div>
     </form>
+    
+    <ChangeEmailModal 
+      open={isEmailModalOpen} 
+      onClose={() => setIsEmailModalOpen(false)} 
+    />
+    </>
   );
 }

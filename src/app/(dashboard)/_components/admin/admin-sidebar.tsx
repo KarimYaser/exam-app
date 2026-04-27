@@ -76,7 +76,7 @@ function AdminSidebarContent() {
 
   return (
     <>
-      <div className="md:hidden flex shrink-0 items-center justify-between border-b border-slate-800 bg-slate-950 p-4 z-30 sticky top-0">
+      <div className="md:hidden flex shrink-0 items-center justify-between border-b border-gray-300 bg-gray-800 p-4 z-30 sticky top-0">
         <div
           className="flex items-center gap-2.5 cursor-pointer"
           onClick={() => router.push("/")}
@@ -105,7 +105,7 @@ function AdminSidebarContent() {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-56 transform border-r border-slate-800 bg-slate-950 flex flex-col h-full min-h-screen transition-transform duration-300 ease-in-out md:translate-x-0 md:sticky md:top-0 font-mono ${
+        className={`fixed inset-y-0 left-0 z-50 w-56 transform border-r border-gray-300 bg-gray-800 flex flex-col h-full min-h-screen transition-transform duration-300 ease-in-out md:translate-x-0 md:sticky md:top-0 font-mono ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import type { Diploma } from "../_actions/diplomas.actions";
+import { getDiplomas, type Diploma } from "../_actions/diplomas.actions";
 
 type DiplomaPageResponse = {
   payload?: {
@@ -42,14 +42,10 @@ export default function useAdminDiplomasList() {
   return useQuery({
     queryKey: ["admin-diplomas"],
     queryFn: async (): Promise<Diploma[]> => {
-      const firstResponse = await fetch("/api/diplomas?page=1");
-      if (!firstResponse.ok) {
-        throw new Error("Failed to fetch diplomas");
-      }
+      const firstResponse = await getDiplomas(1, 100);
 
-      const firstPage = (await firstResponse.json()) as DiplomaPageResponse;
-      const totalPages = getTotalPages(firstPage);
-      const firstItems = getPageItems(firstPage);
+      const totalPages = getTotalPages(firstResponse);
+      const firstItems = getPageItems(firstResponse);
 
       if (totalPages <= 1) {
         return firstItems;
@@ -57,12 +53,7 @@ export default function useAdminDiplomasList() {
 
       const extraPages = await Promise.all(
         Array.from({ length: totalPages - 1 }, (_, index) =>
-          fetch(`/api/diplomas?page=${index + 2}`).then(async (response) => {
-            if (!response.ok) {
-              throw new Error("Failed to fetch diplomas");
-            }
-            return (await response.json()) as DiplomaPageResponse;
-          }),
+          getDiplomas(index + 2, 100),
         ),
       );
 
@@ -71,8 +62,9 @@ export default function useAdminDiplomasList() {
         ...extraPages.flatMap((page) => getPageItems(page)),
       ];
 
-      return Array.from(new Map(merged.map((item) => [item.id, item])).values());
+      return Array.from(
+        new Map(merged.map((item) => [item.id, item])).values(),
+      );
     },
-    retry: 1,
   });
 }

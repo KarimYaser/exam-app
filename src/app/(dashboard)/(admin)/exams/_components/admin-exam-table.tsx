@@ -2,6 +2,7 @@
 
 import { AdminExam, AdminExamCardItem } from "../_types/admin-exam";
 import AdminExamCard from "./admin-exam-card";
+import AdminExamCardSkeleton from "./admin-exam-card-skeleton";
 import AdminExamTableHeader, { type SortKey } from "./admin-exam-table-header";
 
 interface AdminExamTableProps {
@@ -27,11 +28,10 @@ export default function AdminExamTable({
 
       <div className="min-h-0 flex-1 overflow-y-auto">
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-3">
-            <div className="h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-            <p className="text-sm text-gray-500 font-bold animate-pulse">
-              Loading exams...
-            </p>
+          <div className="flex flex-col w-full">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <AdminExamCardSkeleton key={i} />
+            ))}
           </div>
         ) : isError ? (
           <div className="px-4 py-16 text-center">
@@ -46,9 +46,7 @@ export default function AdminExamTable({
             </p>
           </div>
         ) : (
-          pageItems.map((exam) => (
-            <AdminExamCard key={exam.id} exam={exam} />
-          ))
+          pageItems.map((exam) => <AdminExamCard key={exam.id} exam={exam} />)
         )}
       </div>
     </div>

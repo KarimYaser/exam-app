@@ -5,7 +5,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
 import type { AuditLog } from "../_actions/audit.actions";
 
 import { useRouter } from "next/navigation";
@@ -63,14 +62,14 @@ export default function AdminAuditCard({
   };
 
   return (
-    <div className="grid grid-cols-1 gap-3 px-4 py-4 sm:grid-cols-[1fr_1.5fr_1.5fr_1.2fr_40px] sm:gap-4 sm:px-6 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0">
+    <div
+      onClick={() => router.push(`/audit/${log.id}`)}
+      className="grid grid-cols-1 gap-3 px-4 py-4 sm:grid-cols-[1fr_1.5fr_1.5fr_1.2fr_40px] sm:gap-4 sm:px-6 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0 cursor-pointer"
+    >
       {/* Action Column */}
       <div className="flex flex-col justify-center">
         <span
-          className={cn(
-            "text-sm font-bold uppercase",
-            getActionColor(log.action),
-          )}
+          className={`text-sm font-bold uppercase ${getActionColor(log.action)}`}
         >
           {log.action}
         </span>
@@ -86,10 +85,7 @@ export default function AdminAuditCard({
         </span>
         <span className="text-xs text-gray-500 truncate">{log.actorEmail}</span>
         <span
-          className={cn(
-            "text-[11px] font-bold uppercase mt-0.5",
-            getRoleColor(log.actorRole),
-          )}
+          className={`text-[11px] font-bold uppercase mt-0.5 ${getRoleColor(log.actorRole)}`}
         >
           {log.actorRole === "OWNER" || log.actorRole === "SUPER_ADMIN"
             ? "Super Admin"
@@ -117,7 +113,11 @@ export default function AdminAuditCard({
       {/* Actions Dropdown */}
       <div className="flex items-center justify-end">
         <DropdownMenu>
-          <DropdownMenuTrigger className="h-8 w-8 rounded-md hover:bg-gray-200 flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <DropdownMenuTrigger
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+            className="text-gray-500 bg-gray-200 p-1.5 hover:text-gray-800 cursor-pointer"
+          >
             <MoreHorizontal className="h-4 w-4 text-gray-500" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-32 font-mono">

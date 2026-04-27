@@ -8,6 +8,7 @@ export interface Diploma {
   title: string;
   description: string;
   image: string;
+  immutable?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -98,8 +99,7 @@ export async function deleteDiplomaById(
 
     const payload = (await response.json()) as DeleteDiplomaResponse;
 
-    revalidateTag("diplomas");
-    revalidatePath("/");
+    revalidateTag("", "/");
     return payload;
   } catch (error) {
     throw error;

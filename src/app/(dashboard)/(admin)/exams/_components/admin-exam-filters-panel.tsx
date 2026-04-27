@@ -62,7 +62,7 @@ export default function AdminExamFiltersPanel({
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="grid lg:grid-cols-3 grid-cols-1 gap-4">
             <div>
               <select
                 value={diplomaFilter}
@@ -80,12 +80,20 @@ export default function AdminExamFiltersPanel({
               <select
                 value={immutableFilter}
                 onChange={(e) => onImmutableFilterChange(e.target.value)}
-                className="w-full h-10 px-3 rounded border border-gray-200 bg-white text-sm text-gray-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                className={`w-full h-10 px-3 rounded border border-gray-200 bg-white text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all capitalize ${
+                  immutableFilter === "all" ? "text-gray-400" : "text-gray-800"
+                }`}
               >
                 {/* <option value="" disabled className="text-gray-400"></option> */}
-                <option value="all">All Mutable and Immutable</option>
-                <option value="immutable">Immutable</option>
-                <option value="mutable">Mutable</option>
+                <option value="all" className="text-gray-800">
+                  All Mutable and Immutable
+                </option>
+                <option value="immutable" className="text-gray-800">
+                  Immutable
+                </option>
+                <option value="mutable" className="text-gray-800">
+                  Mutable
+                </option>
               </select>
             </div>
           </div>

@@ -115,7 +115,7 @@ export default function ExamQuestions({ examId, diplomaId, diplomaName, examName
   return (
     <div className="w-full h-full min-h-0 flex flex-col bg-white overflow-y-auto">
       {/* 1. Breadcrumbs Navigation */}
-      <div className="px-6 py-3 text-xs md:text-sm font-mono tracking-tight text-gray-400 ">
+      <div className="px-6 py-3 text-xs md:text-sm font-mono tracking-tight text-gray-400">
         <span className="hover:underline cursor-pointer" onClick={() => router.push("/")}>Diplomas</span>
         <span className="mx-2">/</span>
         <span className="hover:underline cursor-pointer" onClick={() => router.push(`/${diplomaId}?title=${encodeURIComponent(diplomaName)}`)}>
@@ -125,57 +125,57 @@ export default function ExamQuestions({ examId, diplomaId, diplomaName, examName
         <span className="text-[#155DFC] font-semibold">{examName}</span>
       </div>
 
-      {/* 2. Blue Action Banner with Question Title */}
-      <div className="flex gap-1 w-full mt-6 px-4 md:px-8 max-w-7xl mx-auto">
-        <button
-          onClick={() =>
-            router.push(`/${diplomaId}?title=${encodeURIComponent(diplomaName)}`)
-          }
-          className="bg-white border border-gray-200 p-4 shrink-0 hover:bg-gray-50 flex items-center justify-center transition-colors"
-        >
-          <ChevronLeft size={24} className="text-[#155DFC]" />
-        </button>
-        <div className="flex items-center gap-3 bg-[#155DFC] text-white px-6 py-4 flex-1 shadow-sm">
-          <HelpCircle size={24} strokeWidth={2} />
-          <h1 className="font-semibold font-mono md:text-xl sm:text-sm">
-            {examName} Questions
-          </h1>
-        </div>
-      </div>
-
-      {/* 3. Progress and Timer Section */}
-      <div className="px-4 py-4 max-w-7xl w-full mx-auto flex flex-col md:flex-row gap-3 items-start">
-        <div className="flex-1 w-full">
-          <div className="flex justify-between items-end mb-2">
-            <span className="text-gray-900 font-bold font-mono text-xs md:text-sm line-clamp-1">
-              {diplomaName} - {examName} Quiz
-            </span>
-            <span className="text-gray-400 font-bold font-mono text-[11px] md:text-xs shrink-0">
-              Question <span className="text-[#155DFC]">{currentQuestionIndex + 1}</span> of{" "}
-              {totalQuestions}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-4">
-            {/* Progress bar */}
-            <div className="flex-1 bg-blue-50 h-2.5 rounded-full overflow-hidden">
-              <div
-                className="bg-[#155DFC] h-full transition-all duration-700 ease-in-out"
-                style={{ width: `${progress}%` }}
-              ></div>
-            </div>
-
-            {/* Timer component */}
-            <div className="shrink-0">
-              <CircularTimer durationMinutes={20} />
-            </div>
+      <div className="max-w-7xl w-full mx-auto flex flex-col flex-1 px-4 md:px-8">
+        {/* 2. Blue Action Banner with Question Title */}
+        <div className="flex gap-1 w-full mt-2 md:mt-6">
+          <button
+            onClick={() =>
+              router.push(`/${diplomaId}?title=${encodeURIComponent(diplomaName)}`)
+            }
+            className="bg-white border border-gray-200 p-4 shrink-0 hover:bg-gray-50 flex items-center justify-center transition-colors"
+          >
+            <ChevronLeft size={24} className="text-[#155DFC]" />
+          </button>
+          <div className="flex items-center gap-3 bg-[#155DFC] text-white px-6 py-4 flex-1 shadow-sm">
+            <HelpCircle size={24} strokeWidth={2} />
+            <h1 className="font-semibold font-mono md:text-xl sm:text-sm">
+              {examName} Questions
+            </h1>
           </div>
         </div>
-      </div>
 
-      {/* 4. Question & Answers Content Area */}
-      <div className="flex-1 w-full bg-white px-4 pb-6">
-        <div className="max-w-7xl mx-auto flex flex-col gap-4">
+        {/* 3. Progress and Timer Section */}
+        <div className="py-4 w-full flex flex-col md:flex-row gap-3 items-start">
+          <div className="flex-1 w-full">
+            <div className="flex justify-between items-end mb-2">
+              <span className="text-gray-900 font-bold font-mono text-xs md:text-sm line-clamp-1">
+                {diplomaName} - {examName} Quiz
+              </span>
+              <span className="text-gray-400 font-bold font-mono text-[11px] md:text-xs shrink-0">
+                Question <span className="text-[#155DFC]">{currentQuestionIndex + 1}</span> of{" "}
+                {totalQuestions}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-4">
+              {/* Progress bar */}
+              <div className="flex-1 bg-blue-50 h-2.5 rounded-full overflow-hidden">
+                <div
+                  className="bg-[#155DFC] h-full transition-all duration-700 ease-in-out"
+                  style={{ width: `${progress}%` }}
+                ></div>
+              </div>
+
+              {/* Timer component */}
+              <div className="shrink-0">
+                <CircularTimer durationMinutes={20} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 4. Question & Answers Content Area */}
+        <div className="flex-1 w-full pb-6 flex flex-col gap-4">
           {/* Question text displayed in blue */}
           <h2 className="text-lg md:text-xl font-bold text-[#155DFC] font-mono leading-tight mb-2">
             {currentQuestion.text}
@@ -252,11 +252,9 @@ export default function ExamQuestions({ examId, diplomaId, diplomaName, examName
             </div>
           )}
         </div>
-      </div>
 
-      {/* 5. Footer Navigation - Previous/Next Buttons */}
-      <div className="px-4 py-4 border-t border-gray-100 bg-white">
-        <div className="max-w-7xl mx-auto flex gap-3">
+        {/* 5. Footer Navigation - Previous/Next Buttons */}
+        <div className="py-4 border-t border-gray-100 flex gap-3 mt-auto">
           {/* Previous button */}
           <button
             onClick={handlePrev}

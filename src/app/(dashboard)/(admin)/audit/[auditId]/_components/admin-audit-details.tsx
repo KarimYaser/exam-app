@@ -69,7 +69,7 @@ export default function AdminAuditDetails({
   };
 
   const updatedFields = log.metadata?.keys || null;
-  console.log(log);
+  // console.log(log);
   // console.log(log.metadata.keys);
 
   return (
@@ -204,10 +204,10 @@ export default function AdminAuditDetails({
               </h3>
               <p className="font-bold text-gray-800 text-[14px]">
                 {updatedFields?.map((field, idx) => (
-                  <>
-                    <span key={field.idx}> {field}</span>
+                  <React.Fragment key={idx}>
+                    <span> {field}</span>
                     <span> {idx !== updatedFields.length - 1 && ","}</span>
-                  </>
+                  </React.Fragment>
                 ))}
               </p>
             </div>

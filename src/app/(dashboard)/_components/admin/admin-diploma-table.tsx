@@ -1,8 +1,10 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import AdminDiplomaCard from "./admin-diploma-card";
-import AdminDiplomaTableHeader, { type SortKey } from "./admin-diploma-table-header";
+import AdminDiplomaTableHeader, {
+  type SortKey,
+} from "./admin-diploma-table-header";
+import AdminDiplomaCardSkeleton from "./admin-diploma-card-skeleton";
 
 type AdminDiplomaItem = {
   id: string;
@@ -34,12 +36,11 @@ export default function AdminDiplomaTable({
 
       <div className="divide-y divide-gray-100 sm:min-h-0 sm:flex-1 sm:overflow-y-auto sm:overscroll-y-contain">
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-3">
-            <div className="h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-            <p className="text-sm text-gray-500 font-bold animate-pulse">
-              Loading diplomas...
-            </p>
-          </div>
+          <>
+            {[1, 2, 3].map((i) => (
+              <AdminDiplomaCardSkeleton key={i} />
+            ))}
+          </>
         ) : isError ? (
           <div className="px-4 py-16 text-center">
             <p className="text-sm text-red-500 font-bold">

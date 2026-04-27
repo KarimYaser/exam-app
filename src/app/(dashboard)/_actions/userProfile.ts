@@ -110,3 +110,51 @@ export async function deleteAccount() {
     throw error;
   }
 }
+
+export async function requestEmailChange(newEmail: string) {
+  const jwt = await getNextAuthToken();
+  const token = jwt?.token;
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/users/email/request`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ newEmail }),
+    },
+  );
+  
+  const data = await response.json();
+  
+  if (!response.ok) {
+    throw new Error(data?.message || "Failed to request email change");
+  }
+  
+  return data;
+}
+
+export async function confirmEmailChange(code: string) {
+  const jwt = await getNextAuthToken();
+  const token = jwt?.token;
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/users/email/confirm`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ code }),
+    },
+  );
+  
+  const data = await response.json();
+  
+  if (!response.ok) {
+    throw new Error(data?.message || "Failed to confirm email change");
+  }
+  
+  return data;
+}

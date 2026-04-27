@@ -125,19 +125,15 @@ function SettingsLayoutContent({ children }: { children: React.ReactNode }) {
   );
 }
 
+import SettingsSkeleton from "./_components/settings-skeleton";
+
 export default function SettingsLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <Suspense
-      fallback={
-        <div className="p-8 font-mono text-gray-500 animate-pulse">
-          Loading settings...
-        </div>
-      }
-    >
+    <Suspense fallback={<SettingsSkeleton />}>
       <SettingsLayoutContent>{children}</SettingsLayoutContent>
     </Suspense>
   );

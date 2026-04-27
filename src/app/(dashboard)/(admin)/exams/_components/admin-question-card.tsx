@@ -49,30 +49,55 @@ export default function AdminQuestionCard({
       <div
         key={question.id}
         onClick={openDetails}
-        className={`grid items-center gap-3 border-b border-gray-100 px-3 py-2 text-sm last:border-b-0 sm:px-4 cursor-pointer ${
-          showExamColumn ? "grid-cols-[1fr_220px_40px]" : "grid-cols-[1fr_40px]"
+        className={`grid items-center gap-3 border-b border-gray-100 px-3 py-3 text-sm last:border-b-0 sm:px-4 cursor-pointer ${
+          showExamColumn
+            ? "grid-cols-[1fr_40px] sm:grid-cols-[1fr_220px_40px]"
+            : "grid-cols-[1fr_40px]"
         }`}
       >
-        <p className="truncate text-gray-800 hover:underline" title={question.text}>
-          {question.text}
-        </p>
+        <div className="min-w-0">
+          <p
+            className="truncate text-gray-800 hover:underline sm:font-normal font-medium"
+            title={question.text}
+          >
+            {question.text}
+          </p>
+          {showExamColumn && (
+            <p
+              className="truncate text-gray-500 text-xs mt-0.5 sm:hidden"
+              title={examTitle || ""}
+            >
+              {examTitle}
+            </p>
+          )}
+        </div>
 
         {showExamColumn ? (
-          <p className="truncate text-gray-500" title={examTitle || ""}>
+          <p
+            className="truncate text-gray-500 hidden sm:block"
+            title={examTitle || ""}
+          >
             {examTitle}
           </p>
         ) : null}
 
         <div
           className="flex justify-end"
-          onClick={(event) => event.stopPropagation()} /*click event won't bubble up to parent elements */
-          onKeyDown={(event) => event.stopPropagation()} /*key down event won't bubble up to parent elements */
+          onClick={(event) =>
+            event.stopPropagation()
+          } /*click event won't bubble up to parent elements */
+          onKeyDown={(event) =>
+            event.stopPropagation()
+          } /*key down event won't bubble up to parent elements */
         >
           <DropdownMenu>
-            <DropdownMenuTrigger className="rounded p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-800">
-              <MoreHorizontal className="h-4 w-4" />
+            <DropdownMenuTrigger className="text-gray-500 bg-gray-200 p-1.5 hover:text-gray-800 cursor-pointer">
+              <MoreHorizontal className=" h-4 w-4" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-white font-sans text-sm *:hover:bg-gray-100">
+            <DropdownMenuContent
+              align="end"
+              className="bg-white font-sans text-sm *:hover:bg-gray-100"
+            >
               <DropdownMenuItem onClick={openDetails}>
                 <Eye className="h-4 w-4" />
                 View

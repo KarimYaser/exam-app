@@ -2,14 +2,19 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Eye, MoreVertical, Pencil, Trash2 } from "lucide-react";
+import {
+  Eye,
+  MoreHorizontal,
+  MoreVertical,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -66,7 +71,7 @@ export default function AdminDiplomaCard({
           handleOpenDetails();
         }
       }}
-      className="flex flex-col cursor-pointer gap-3 border-b border-gray-200 bg-gray-100 px-4 py-4 text-sm last:border-b-0 font-mono sm:grid sm:grid-cols-[56px_1fr_1.2fr_40px] sm:items-center sm:gap-4"
+      className="flex flex-col cursor-pointer gap-3 border-b border-gray-200 bg-white px-4 py-4 text-sm last:border-b-0 font-mono sm:grid sm:grid-cols-[56px_1fr_1.2fr_40px] sm:items-center sm:gap-4"
     >
       <div className="relative h-40 w-full shrink-0 overflow-hidden rounded border border-slate-200 sm:h-14 sm:w-14">
         <Image
@@ -98,8 +103,8 @@ export default function AdminDiplomaCard({
         onKeyDown={(e) => e.stopPropagation()}
       >
         <DropdownMenu>
-          <DropdownMenuTrigger className="rounded p-1 text-gray-500 outline-none hover:bg-gray-100 hover:text-gray-800">
-            <MoreVertical className="h-4 w-4" />
+          <DropdownMenuTrigger className="text-gray-500 bg-gray-200 p-1.5 hover:text-gray-800 cursor-pointer">
+            <MoreHorizontal className="h-4 w-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
@@ -131,7 +136,10 @@ export default function AdminDiplomaCard({
       </div>
 
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-      <div onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+      <div
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
         <ConfirmDeleteModal
           open={confirmDeleteOpen}
           title="Delete this diploma?"

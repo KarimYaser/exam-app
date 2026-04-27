@@ -16,7 +16,7 @@ type AdminDiplomaItem = {
   title: string;
   description: string;
   image?: string;
-  category: string;
+  immutability: string;
   createdAt: string;
 };
 
@@ -48,7 +48,7 @@ function mapDiplomaToAdminItem(diploma: Diploma): AdminDiplomaItem {
     title: diploma.title,
     description: diploma.description,
     image: diploma.image,
-    category: "General",
+    immutability: diploma.immutable ? "immutable" : "mutable",
     createdAt: diploma.createdAt,
   };
 }
@@ -56,7 +56,7 @@ function mapDiplomaToAdminItem(diploma: Diploma): AdminDiplomaItem {
 export default function AdminDiplomasDashboard() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState<string>("all");
+  const [immutability, setImmutability] = useState<string>("all");
   const [filtersOpen, setFiltersOpen] = useState(true);
   const [sort, setSort] = useState<SortKey>("title-asc");
   const router = useRouter();
@@ -67,15 +67,12 @@ export default function AdminDiplomasDashboard() {
     return apiItems.map(mapDiplomaToAdminItem);
   }, [data]);
 
-  const categories = useMemo(() => {
-    const set = new Set(diplomas.map((d) => d.category));
-    return ["all", ...Array.from(set).sort()];
-  }, [diplomas]);
+  const immutabilityOptions = ["all", "mutable", "immutable"];
 
   const filtered = useMemo(() => {
     let list = [...diplomas];
-    if (category !== "all") {
-      list = list.filter((d) => d.category === category);
+    if (immutability !== "all") {
+      list = list.filter((d) => d.immutability === immutability);
     }
     if (search.trim()) {
       const q = search.trim().toLowerCase();
@@ -86,7 +83,7 @@ export default function AdminDiplomasDashboard() {
       );
     }
     return applySort(list, sort);
-  }, [diplomas, search, category, sort]);
+  }, [diplomas, search, immutability, sort]);
 
   const total = filtered.length;
   const pageCount = Math.max(1, Math.ceil(total / ADMIN_DIPLOMAS_PAGE_SIZE));
@@ -105,14 +102,14 @@ export default function AdminDiplomasDashboard() {
     setPage(1);
   };
 
-  const handleCategoryChange = (value: string) => {
-    setCategory(value);
+  const handleImmutabilityChange = (value: string) => {
+    setImmutability(value);
     setPage(1);
   };
 
   const handleClearFilters = () => {
     setSearch("");
-    setCategory("all");
+    setImmutability("all");
     setPage(1);
   };
 
@@ -149,11 +146,11 @@ export default function AdminDiplomasDashboard() {
       <div className="flex min-h-0 flex-1 flex-col px-4 py-4 sm:px-6">
         <AdminDiplomaFiltersPanel
           search={search}
-          category={category}
+          immutability={immutability}
           filtersOpen={filtersOpen}
-          categories={categories}
+          immutabilityOptions={immutabilityOptions}
           onSearchChange={handleSearchChange}
-          onCategoryChange={handleCategoryChange}
+          onImmutabilityChange={handleImmutabilityChange}
           onToggleFilters={() => setFiltersOpen((o) => !o)}
           onClearFilters={handleClearFilters}
           onApplyFilters={handleApplyFilters}

@@ -5,11 +5,11 @@ import { Search, SlidersHorizontal, ChevronsDownUp } from "lucide-react";
 
 interface AdminDiplomaFiltersPanelProps {
   search: string;
-  category: string;
+  immutability: string;
   filtersOpen: boolean;
-  categories: string[];
+  immutabilityOptions: string[];
   onSearchChange: (value: string) => void;
-  onCategoryChange: (value: string) => void;
+  onImmutabilityChange: (value: string) => void;
   onToggleFilters: () => void;
   onClearFilters: () => void;
   onApplyFilters: () => void;
@@ -17,11 +17,11 @@ interface AdminDiplomaFiltersPanelProps {
 
 export default function AdminDiplomaFiltersPanel({
   search,
-  category,
+  immutability,
   filtersOpen,
-  categories,
+  immutabilityOptions,
   onSearchChange,
-  onCategoryChange,
+  onImmutabilityChange,
   onToggleFilters,
   onClearFilters,
   onApplyFilters,
@@ -53,21 +53,23 @@ export default function AdminDiplomaFiltersPanel({
               placeholder="Search by title"
               value={search}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full h-10 px-3 rounded border border-gray-200 bg-white text-sm text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 pl-10"
+              className="w-full px-2 h-10 rounded border border-gray-200 bg-white text-sm text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             />
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           </div>
 
           <div className="grid grid-cols-1 gap-4">
             <div>
               <select
-                value={category}
-                onChange={(e) => onCategoryChange(e.target.value)}
-                className="w-full h-10 px-3 rounded border border-gray-200 bg-white text-sm text-gray-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                value={immutability}
+                onChange={(e) => onImmutabilityChange(e.target.value)}
+                className={`lg:w-[326px] w-full h-10 px-3 rounded border border-gray-200 bg-white text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all capitalize ${
+                  immutability === "all" ? "text-gray-800" : "text-gray-400"
+                }`}
               >
-                {categories.map((c) => (
-                  <option key={c} value={c}>
-                    {c === "all" ? "All categories" : c}
+                {immutabilityOptions.map((c) => (
+                  <option key={c} value={c} className="text-gray-800">
+                    {c === "all" ? "Immutability" : c}
                   </option>
                 ))}
               </select>

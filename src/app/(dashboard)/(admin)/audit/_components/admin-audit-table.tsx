@@ -5,8 +5,9 @@ import { Eraser } from "lucide-react";
 import AdminAuditCard from "./admin-audit-card";
 import type { AuditLog } from "../_actions/audit.actions";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import  { type SortKey } from "./admin-audit-table-header";
+import { type SortKey } from "./admin-audit-table-header";
 import AdminAuditTableHeader from "./admin-audit-table-header";
+import AdminAuditCardSkeleton from "./admin-audit-card-skeleton";
 
 interface TableProps {
   logs: AuditLog[];
@@ -32,14 +33,13 @@ export default function Table({
   return (
     <div className="flex flex-col rounded border border-gray-200 bg-white shadow-sm sm:min-h-0 sm:flex-1 sm:overflow-hidden">
       <AdminAuditTableHeader sort={sort} onSortChange={onSortChange} />
-      
+
       <div className="divide-y divide-gray-100 sm:min-h-0 sm:flex-1 sm:overflow-y-auto overflow-x-hidden">
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-3">
-            <div className="h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-            <p className="text-sm text-gray-500 font-bold animate-pulse">
-              Loading audit logs...
-            </p>
+          <div className="flex flex-col w-full">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <AdminAuditCardSkeleton key={i} />
+            ))}
           </div>
         ) : isError ? (
           <div className="px-4 py-16 text-center">
