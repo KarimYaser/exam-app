@@ -22,10 +22,6 @@ const nextConfig: NextConfig = {
       new URL(`https://elevate-bootcamp.cloud/*/**`),
     ],
   },
-  experimental: {
-    dynamicIO: true,
-    // reactCompiler: true,
-  } as any,
 };
 
 export default nextConfig;
