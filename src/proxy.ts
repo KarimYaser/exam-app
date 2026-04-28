@@ -13,6 +13,17 @@ const userPrivateRoutes = new Set([
   "/[id]/[examId]",
   "/[id]",
   "/[id]/[id]/[examId]",
+  "/audit",
+  "/new-diploma",
+  "/exams",
+  "/exams/new",
+  "/exams/[examId]",
+  "/exams/[id]",
+  "/exams/[id]/edit",
+  "/[id]/[examId]",
+  "/[id]",
+  "/[id]/edit",
+  "/[id]/[id]/[examId]"
 ]);
 
 const adminPrivateRoutes = new Set([
@@ -44,9 +55,11 @@ export default async function proxy(request: NextRequest) {
   const jwt = await getToken({ req: request });
   const pathname = request.nextUrl.pathname;
 const isAdminUser = await isAdmin();
+
   // User cannot access private routes without authentication
   // User cannot access auth routes if they are authenticated
-  const privateRoutes = isAdminUser ? adminPrivateRoutes : userPrivateRoutes;
+  // const privateRoutes = isAdminUser ? adminPrivateRoutes : userPrivateRoutes;
+  const privateRoutes = userPrivateRoutes;
   if (privateRoutes.has(pathname)) {
     if (jwt) return NextResponse.next(); /* allow all */
 
