@@ -46,7 +46,7 @@ export default async function proxy(request: NextRequest) {
 const isAdminUser = await isAdmin();
   // User cannot access private routes without authentication
   // User cannot access auth routes if they are authenticated
-const privateRoutes = isAdminUser ? adminPrivateRoutes : userPrivateRoutes;
+  const privateRoutes = isAdminUser ? adminPrivateRoutes : userPrivateRoutes;
   if (privateRoutes.has(pathname)) {
     if (jwt) return NextResponse.next(); /* allow all */
 
