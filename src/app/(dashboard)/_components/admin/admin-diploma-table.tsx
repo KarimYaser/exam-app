@@ -5,15 +5,9 @@ import AdminDiplomaTableHeader, {
   type SortKey,
 } from "./admin-diploma-table-header";
 import AdminDiplomaCardSkeleton from "./admin-diploma-card-skeleton";
+import { Diploma } from "@/lib/types/diplomas";
 
-type AdminDiplomaItem = {
-  id: string;
-  title: string;
-  description: string;
-  image?: string;
-  category: string;
-  createdAt: string;
-};
+type AdminDiplomaItem = Diploma;
 
 interface AdminDiplomaTableProps {
   pageItems: AdminDiplomaItem[];

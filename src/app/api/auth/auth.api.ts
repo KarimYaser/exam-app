@@ -1,6 +1,7 @@
-'use server';
+"use server";
 
 import { ILoginFields } from "@/lib/types/auth";
+// @ts-ignore
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
@@ -9,34 +10,38 @@ import { cookies } from "next/headers";
 const DATABASE = [
   {
     id: 1,
-    username: 'abdulrahman',
-    password: '$2b$08$uBi63.lFaeyGsd8c4QzXIeRLWKAxfBBVYwub1ppSczN/9LdtuNFjq'
-  }
-]
+    username: "abdulrahman",
+    password: "$2b$08$uBi63.lFaeyGsd8c4QzXIeRLWKAxfBBVYwub1ppSczN/9LdtuNFjq",
+  },
+];
 
 export async function loginAction(fields: ILoginFields) {
   // Indentification
-  const user = DATABASE.find(user => user.username === fields.username);
-  if (!user) return { status: false, message: 'Invalid credentials' };
+  const user = DATABASE.find((user) => user.username === fields.username);
+  if (!user) return { status: false, message: "Invalid credentials" };
 
   // Authentication
-  const isCorrectPassword = await bcrypt.compare(fields.password, user.password);
-  if (!isCorrectPassword) return { status: false, message: 'Invalid credentials' };
+  const isCorrectPassword = await bcrypt.compare(
+    fields.password,
+    user.password,
+  );
+  if (!isCorrectPassword)
+    return { status: false, message: "Invalid credentials" };
 
   // Generate Token
   const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, {
-    expiresIn: '7d',
+    expiresIn: "7d",
   });
 
   const cookiesStore = await cookies();
 
-  cookiesStore.set('token', token, {
+  cookiesStore.set("token", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
     expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-    path: '/',
-  })
+    path: "/",
+  });
 }
 
 // export async function loginAction(fields: ILoginFields) {
@@ -65,4 +70,3 @@ export async function loginAction(fields: ILoginFields) {
 //     })
 //   }
 // }
-

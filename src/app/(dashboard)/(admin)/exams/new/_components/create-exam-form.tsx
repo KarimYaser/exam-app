@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
-import type { Diploma } from "@/app/(dashboard)/_actions/diplomas.actions";
+import type { Diploma } from "@/lib/types/diplomas";
 import { Button } from "@/components/ui/button";
 import {
   createExamSchema,
@@ -155,9 +155,9 @@ export function CreateExamForm({
     <div className="flex min-h-0 flex-1 flex-col bg-[#f4f5f7] font-mono text-[13px] overflow-auto">
       <div className="flex shrink-0 items-center gap-2 border-b border-gray-200 bg-white px-6 py-3 text-xs">
         <span className="text-gray-500">
-            <Link href="/exams" className="hover:underline">
-              Exams
-            </Link>
+          <Link href="/exams" className="hover:underline">
+            Exams
+          </Link>
         </span>
         <span className="text-gray-300">/</span>
         <span className="font-semibold text-[#155DFC]">Add New Exam</span>
@@ -258,8 +258,12 @@ export function CreateExamForm({
                           }}
                           className="flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-gray-100"
                         >
-                          <span className="truncate text-gray-800">{diploma.title}</span>
-                          <span className="ml-3 shrink-0 text-xs text-gray-500">{diploma.id}</span>
+                          <span className="truncate text-gray-800">
+                            {diploma.title}
+                          </span>
+                          <span className="ml-3 shrink-0 text-xs text-gray-500">
+                            {diploma.id}
+                          </span>
                         </button>
                       ))
                     ) : (

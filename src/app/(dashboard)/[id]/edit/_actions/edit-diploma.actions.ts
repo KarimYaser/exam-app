@@ -50,7 +50,7 @@ export async function updateDiplomaById(
 
     const payload: UpdateDiplomaResponse = await response.json();
 
-    revalidateTag("diplomas");
+    // revalidateTag("diplomas");
     revalidatePath("/");
     revalidatePath(`/${diplomaId}`);
 

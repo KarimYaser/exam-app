@@ -1,4 +1,4 @@
-import type { Diploma } from "@/app/(dashboard)/_actions/diplomas.actions";
+import type { Diploma } from "@/lib/types/diplomas";
 
 export type EditDiplomaPageProps = {
   diploma: Diploma;

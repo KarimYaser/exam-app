@@ -3,19 +3,24 @@ import Link from "next/link";
 import Image from "next/image";
 import { ExamCardProps } from "../_types/exam";
 
-
 export default function ExamCard({ exam, diplomaId }: ExamCardProps) {
   return (
     <div className="flex flex-col md:flex-row bg-[#EFF6FF] border border-gray-100 shadow-[0_2px_4px_rgba(0,0,0,0.02)] p-4 md:p-6 gap-6 relative group transition-all duration-300 hover:shadow-md">
       {/* Left Icon Square */}
       <div className="w-full aspect-video md:w-24 md:h-24 md:aspect-auto border border-blue-300 shrink-0 overflow-hidden bg-gray-50 shadow-sm flex items-center justify-center relative">
-        <Image
-          unoptimized
-          src={exam.image}
-          alt={exam.title}
-          fill
-          className="object-cover p-2 "
-        />
+        {exam.image ? (
+          <Image
+            unoptimized
+            src={exam.image || ""}
+            alt={exam.title}
+            fill
+            className="object-cover p-2 "
+          />
+        ) : (
+          <div className="w-full aspect-video md:w-24 md:h-24 md:aspect-auto border border-blue-300 shrink-0 overflow-hidden bg-gray-50 shadow-sm flex items-center justify-center relative">
+            <span className="text-gray-400">No Image</span>
+          </div>
+        )}
       </div>
 
       {/* Main Content */}

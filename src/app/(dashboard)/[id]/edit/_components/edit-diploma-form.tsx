@@ -44,7 +44,6 @@ export default function EditDiplomaForm({ diploma }: EditDiplomaPageProps) {
   });
 
   const selectedImage = watch("image") ?? "";
-
   const { mutate: updateDiploma, isPending } = useMutation({
     mutationFn: (values: UpdateDiplomaInput) =>
       updateDiplomaById(diploma.id, values),
@@ -53,6 +52,7 @@ export default function EditDiplomaForm({ diploma }: EditDiplomaPageProps) {
         position: "top-right",
       });
       queryClient.invalidateQueries({ queryKey: ["admin-diplomas"] });
+      queryClient.invalidateQueries({ queryKey: ["diplomas"] });
       router.push(`/${diploma.id}?title=${encodeURIComponent(diploma.title)}`);
       router.refresh();
     },
@@ -186,7 +186,7 @@ export default function EditDiplomaForm({ diploma }: EditDiplomaPageProps) {
                 value={selectedImage}
                 error={errors.image?.message}
                 onUploadingChange={setIsImageUploading}
-                onChange={(image: any) =>
+                onChange={(image: string) =>
                   setValue("image", image, {
                     shouldDirty: true,
                     shouldTouch: true,

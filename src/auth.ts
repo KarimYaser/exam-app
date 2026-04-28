@@ -1,6 +1,6 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { IUser } from "./lib/types/user";
+import { ILoginResponse, IUser } from "./lib/types/user";
 
 declare type IApiResponse<T> = IErrorResponse | ISuccessResponse<T>;
 
@@ -28,22 +28,18 @@ interface ILoginPayload {
 }
 
 async function fetchUserProfile(bearerToken: string): Promise<IUser | null> {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/users/profile`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${bearerToken}`,
-      },
-      cache: "no-store",
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/profile`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${bearerToken}`,
     },
-  );
+    cache: "no-store",
+  });
   if (!res.ok) {
     return null;
   }
-  const data: IApiResponse<ISuccessResponse<{ user: IUser }>> =
-    await res.json();
+  const data: IApiResponse<{ user: IUser }> = await res.json();
   if (!data.status || !data.payload?.user) {
     return null;
   }
@@ -85,17 +81,19 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const data: IApiResponse<ISuccessResponse<IUser>> =
-          await response.json();
+        const data: IApiResponse<ILoginResponse> = await response.json();
         if (!data.status) {
           throw new Error(data.message);
         }
-        const loginData: IUser = data.payload;
+        const loginData = data.payload;
+        if (!loginData || !loginData.user || !loginData.token) {
+          return null;
+        }
 
         return {
-          id: loginData?.user.id,
-          token: loginData?.token,
-          user: loginData?.user,
+          id: loginData.user.id,
+          token: loginData.token,
+          user: loginData.user,
         };
       },
     }),

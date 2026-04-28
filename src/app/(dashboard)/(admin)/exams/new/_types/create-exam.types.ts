@@ -1,4 +1,4 @@
-import { Diploma } from "@/app/(dashboard)/_actions/diplomas.actions";
+import { Diploma } from "@/lib/types/diplomas";
 
 export type CreateExamQuestionItem = {
   id: string;

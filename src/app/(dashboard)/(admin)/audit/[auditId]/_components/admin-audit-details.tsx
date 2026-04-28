@@ -203,12 +203,14 @@ export default function AdminAuditDetails({
                 Updated Fields
               </h3>
               <p className="font-bold text-gray-800 text-[14px]">
-                {updatedFields?.map((field, idx) => (
-                  <React.Fragment key={idx}>
-                    <span> {field}</span>
-                    <span> {idx !== updatedFields.length - 1 && ","}</span>
-                  </React.Fragment>
-                ))}
+                {updatedFields?.map(
+                  (field: string, idx: number): React.ReactNode => (
+                    <React.Fragment key={idx}>
+                      <span> {field}</span>
+                      <span> {idx !== updatedFields.length - 1 && ","}</span>
+                    </React.Fragment>
+                  ),
+                )}
               </p>
             </div>
           )}

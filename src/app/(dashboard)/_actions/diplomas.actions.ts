@@ -1,9 +1,9 @@
 "use server";
 
 import { getNextAuthToken } from "@/lib/util/auth.util";
-import { revalidatePath, revalidateTag } from "next/cache";
-
-export interface Diploma {
+import { revalidateTag } from "next/cache";
+import { Diploma as DiplomaType } from "@/lib/types/diplomas";
+export interface Diploma extends DiplomaType {
   id: string;
   title: string;
   description: string;

@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidateTag } from "next/cache";
 import { getNextAuthToken } from "@/lib/util/auth.util";
 import { Diploma } from "../../_actions/diplomas.actions";
 
@@ -42,7 +41,6 @@ export async function createDiploma(
       throw new Error(payload?.message || "Failed to create diploma");
     }
 
-    revalidateTag("diplomas");
     return payload;
   } catch (error) {
     throw error;

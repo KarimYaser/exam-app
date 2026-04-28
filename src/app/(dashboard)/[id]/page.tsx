@@ -7,6 +7,7 @@ import { getDiplomas } from "../_actions/diplomas.actions";
 import isAdmin from "@/lib/util/is-admin";
 import isSuperAdmin from "@/lib/util/is-super-admin";
 import Unauthorized from "@/app/unauthorized";
+import { Diploma } from "@/lib/types/diplomas";
 
 interface DiplomaExamsPageProps {
   params: Promise<{ id: string }>;
@@ -22,23 +23,29 @@ export default async function DiplomaExamsPage({
   const diplomaId = resolvedParams.id;
 
   const isAdminUser = await isAdmin();
-  const isSuperAdminUser=await isSuperAdmin()
-  
+  const isSuperAdminUser = await isSuperAdmin();
+
   const diplomasResponse = isAdminUser ? await getDiplomas(1, 100) : null;
-  const diploma = diplomasResponse?.payload?.data?.find(
+  const diploma: Diploma | undefined = diplomasResponse?.payload?.data?.find(
     (item) => item.id === diplomaId,
   );
 
   const diplomaTitle =
     (resolvedSearchParams.title as string) || diploma?.title || "Diploma";
-    // console.log(!isAdminUser && !isSuperAdminUser)
-if(!isAdminUser && !isSuperAdminUser){
-  return <ExamsContent diplomaId={diplomaId} diplomaTitle={diplomaTitle} />
-}
-return (
-    <>
-<DiplomaDetails diploma={diploma} /> 
-        
-    </>
-  );
+  if (isAdminUser || isSuperAdminUser) {
+    if (!diploma) {
+      return (
+        <div className="flex h-full items-center justify-center">
+          <p className="text-gray-500">Diploma not found.</p>
+        </div>
+      );
+    }
+    return (
+      <>
+        <DiplomaDetails diploma={diploma} />
+      </>
+    );
+  }
+
+  return <ExamsContent diplomaId={diplomaId} diplomaTitle={diplomaTitle} />;
 }

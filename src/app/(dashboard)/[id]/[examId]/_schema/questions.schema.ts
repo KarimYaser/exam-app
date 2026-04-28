@@ -27,7 +27,7 @@ export const QuestionsResponseSchema = z.object({
 
 // Schema for submitting exam answers
 export const SubmitAnswersSchema = z.object({
-  answers: z.record(z.string()), // { questionId: answerId, ... }
+  answers: z.record(z.string(), z.string()), // { questionId: answerId, ... }
 });
 
 export type Question = z.infer<typeof QuestionSchema>;

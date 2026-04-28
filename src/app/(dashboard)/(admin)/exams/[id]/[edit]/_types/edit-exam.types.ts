@@ -1,5 +1,5 @@
 import { AdminExam } from "../../../_types/admin-exam";
-import { Diploma } from "@/app/(dashboard)/_actions/diplomas.actions";
+import { Diploma } from "@/lib/types/diplomas";
 
 export type EditExamQuestionItem = {
   id: string;

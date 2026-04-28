@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Diploma } from "../../_actions/diplomas.actions";
+import { Diploma } from "@/lib/types/diplomas";
 import useAdminDiplomasList from "../../_hooks/use-admin-diplomas-list";
 import AdminDiplomaPaginationBar from "./admin-diploma-pagination-bar";
 import AdminDiplomaFiltersPanel from "./admin-diploma-filters-panel";
@@ -11,14 +11,7 @@ import { SortKey } from "./admin-diploma-table-header";
 
 const ADMIN_DIPLOMAS_PAGE_SIZE = 12;
 
-type AdminDiplomaItem = {
-  id: string;
-  title: string;
-  description: string;
-  image?: string;
-  immutability: string;
-  createdAt: string;
-};
+type AdminDiplomaItem = Diploma;
 
 function applySort(
   items: AdminDiplomaItem[],
@@ -45,16 +38,7 @@ function applySort(
   }
 }
 
-function mapDiplomaToAdminItem(diploma: Diploma): AdminDiplomaItem {
-  return {
-    id: diploma.id,
-    title: diploma.title,
-    description: diploma.description,
-    image: diploma.image,
-    immutability: diploma.immutable ? "immutable" : "mutable",
-    createdAt: diploma.createdAt,
-  };
-}
+
 
 export default function AdminDiplomasDashboard() {
   const [page, setPage] = useState(1);
@@ -66,8 +50,7 @@ export default function AdminDiplomasDashboard() {
   const { data, isLoading, isError } = useAdminDiplomasList();
 
   const diplomas = useMemo(() => {
-    const apiItems: Diploma[] = data ?? [];
-    return apiItems.map(mapDiplomaToAdminItem);
+    return data ?? [];
   }, [data]);
 
   const immutabilityOptions = ["all", "mutable", "immutable"];
@@ -75,7 +58,10 @@ export default function AdminDiplomasDashboard() {
   const filtered = useMemo(() => {
     let list = [...diplomas];
     if (immutability !== "all") {
-      list = list.filter((d) => d.immutability === immutability);
+      list = list.filter((d) => {
+        const itemImmutability = d.immutable ? "immutable" : "mutable";
+        return itemImmutability === immutability;
+      });
     }
     if (search.trim()) {
       const q = search.trim().toLowerCase();
@@ -92,7 +78,10 @@ export default function AdminDiplomasDashboard() {
   const pageCount = Math.max(1, Math.ceil(total / ADMIN_DIPLOMAS_PAGE_SIZE));
   const safePage = Math.min(page, pageCount);
   const start = (safePage - 1) * ADMIN_DIPLOMAS_PAGE_SIZE;
-  const pageItems = filtered.slice(start, start + ADMIN_DIPLOMAS_PAGE_SIZE);
+  const pageItems: AdminDiplomaItem[] = filtered.slice(
+    start,
+    start + ADMIN_DIPLOMAS_PAGE_SIZE,
+  );
   const rangeFrom = total === 0 ? 0 : start + 1;
   const rangeTo = Math.min(start + ADMIN_DIPLOMAS_PAGE_SIZE, total);
 

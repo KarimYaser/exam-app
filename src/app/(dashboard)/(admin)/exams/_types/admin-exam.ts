@@ -38,4 +38,5 @@ export type AdminExamCardItem = {
   diplomaTitle: string;
   questionsCount: number;
   image?: string | null;
+  immutable?: boolean;
 };

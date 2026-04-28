@@ -9,11 +9,16 @@ export interface ExamCardProps {
     id: string;
     title: string;
     description: string;
-    duration: number;
+    duration?: number;
     _count: {
       questions: number;
     };
+    questionsCount?: number;
     image?: string | null;
+    diploma?: {
+      id: string;
+      title: string;
+    };
   };
   diplomaId: string;
 }

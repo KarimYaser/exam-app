@@ -3,9 +3,10 @@ export interface Diploma {
   title: string;
   description: string;
   image: string;
-  category: string;
+  category?: string;
   createdAt: string;
   updatedAt: string;
+  immutable?: boolean;
 }
 
 export interface Pagination {

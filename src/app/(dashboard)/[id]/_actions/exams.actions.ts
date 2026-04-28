@@ -3,13 +3,10 @@
 import { getNextAuthToken } from "@/lib/util/auth.util";
 import { ExamsListResponse } from "../_types/exam";
 
-
-
 export async function getExams(diplomaId: string): Promise<ExamsListResponse> {
   const jwt = await getNextAuthToken();
   const token = jwt?.token;
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-  
 
   try {
     const response = await fetch(
@@ -21,15 +18,14 @@ export async function getExams(diplomaId: string): Promise<ExamsListResponse> {
           Authorization: `Bearer ${token}`,
         },
         cache: "no-store",
-      }
+      },
     );
-    
-        const payload: ExamsListResponse = await response.json();
-        console.log("payload:", payload);
+
+    const payload: ExamsListResponse = await response.json();
 
     if (!response.ok) {
       console.error("Failed to fetch exams:", response.status);
-      return { payload: { data: [] } };
+      return { status: false, code: response.status, payload: { data: [] } };
     }
     return payload;
   } catch (error) {

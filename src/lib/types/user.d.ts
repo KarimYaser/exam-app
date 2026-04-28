@@ -10,11 +10,17 @@ export interface IUser {
   firstName: string;
   lastName: string;
   profilePhoto: string | null;
+  image: string | null;
   emailVerified: boolean;
   phoneVerified: boolean;
   role: TRole;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ILoginResponse {
+  token: string;
+  user: IUser;
 }
 
 const user: IUser = {
