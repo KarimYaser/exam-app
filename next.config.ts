@@ -23,7 +23,8 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    dynamicIO: true,
+    // dynamicIO: true,
+    reactCompiler: true,
   } as any,
 };
 
