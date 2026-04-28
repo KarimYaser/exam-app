@@ -3,7 +3,16 @@ import { cookies } from "next/headers";
 
 export async function getNextAuthToken() {
   const cookiesStore = await cookies();
-  const token = cookiesStore.get(process.env.NEXTAUTH_SESSION_COOKIE!)?.value;
+  const envCookieName = process.env.NEXTAUTH_SESSION_COOKIE;
+  const candidateCookieNames = [
+    envCookieName,
+    "__Secure-next-auth.session-token",
+    "__Host-next-auth.session-token",
+    "next-auth.session-token",
+  ].filter(Boolean) as string[];
+  const token = candidateCookieNames
+    .map((name) => cookiesStore.get(name)?.value)
+    .find(Boolean);
   // console.log("token", token);
   try {
     const jwt = await decode({

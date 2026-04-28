@@ -1,9 +1,8 @@
-import isAdmin  from "@/lib/util/is-admin";
+import { USER_ROLES } from "@/lib/constants/api.constant";
 import { NextRequest, NextResponse } from "next/server";
-import { getNextAuthToken } from "./lib/util/auth.util";
 import { getToken } from "next-auth/jwt";
 
-const userPrivateRoutes = new Set([
+const userPrivateRoutes = [
   "/",
   "/overview",
   "/settings",
@@ -24,9 +23,9 @@ const userPrivateRoutes = new Set([
   "/[id]",
   "/[id]/edit",
   "/[id]/[id]/[examId]"
-]);
+];
 
-const adminPrivateRoutes = new Set([
+const adminPrivateRoutes = [
   "/",
   "/admin",
   "/settings",
@@ -42,25 +41,48 @@ const adminPrivateRoutes = new Set([
   "/[id]",
   "/[id]/edit",
   "/[id]/[id]/[examId]",
-]);
+];
 
-const authRoutes = new Set([
+const authRoutes = [
   "/login",
   "/signup",
   "/forget-password",
   "/reset-password",
-]);
+];
+
+const trimTrailingSlash = (path: string) =>
+  path.length > 1 && path.endsWith("/") ? path.slice(0, -1) : path;
+
+const toRouteRegex = (pattern: string) => {
+  if (pattern === "/") {
+    return /^\/$/;
+  }
+
+  const escaped = pattern
+    .replace(/\//g, "\\/")
+    .replace(/\[[^/\]]+\]/g, "[^/]+")
+    .replace(/\*\*/g, ".*")
+    .replace(/\*/g, "[^/]+?");
+
+  return new RegExp(`^${escaped}$`);
+};
+
+const matchesRoute = (pathname: string, routes: string[]) => {
+  const normalized = trimTrailingSlash(pathname);
+  return routes.some((route) => toRouteRegex(route).test(normalized));
+};
 
 export default async function proxy(request: NextRequest) {
   const jwt = await getToken({ req: request });
   const pathname = request.nextUrl.pathname;
-const isAdminUser = await isAdmin();
+  const role = (jwt as { user?: { role?: string } } | null)?.user?.role;
+  const isAdminUser =
+    role === USER_ROLES.ADMIN || role === USER_ROLES.SUPER_ADMIN;
 
   // User cannot access private routes without authentication
   // User cannot access auth routes if they are authenticated
-  // const privateRoutes = isAdminUser ? adminPrivateRoutes : userPrivateRoutes;
-  const privateRoutes = userPrivateRoutes;
-  if (privateRoutes.has(pathname)) {
+  const privateRoutes = isAdminUser ? adminPrivateRoutes : userPrivateRoutes;
+  if (matchesRoute(pathname, privateRoutes)) {
     if (jwt) return NextResponse.next(); /* allow all */
 
     const redirectUrl = new URL("/login", request.nextUrl.origin);
@@ -70,7 +92,7 @@ const isAdminUser = await isAdmin();
     return NextResponse.redirect(redirectUrl);
   }
 
-  if (authRoutes.has(pathname)) {
+  if (matchesRoute(pathname, authRoutes)) {
     if (!jwt) return NextResponse.next(); /* auth route without token => go */
 
     const redirectUrl = new URL(
