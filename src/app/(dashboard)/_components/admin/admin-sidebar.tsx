@@ -76,7 +76,7 @@ function AdminSidebarContent() {
 
   return (
     <>
-      <div className="md:hidden flex shrink-0 items-center justify-between border-b border-gray-300 bg-gray-800 p-4 z-30 sticky top-0">
+      <div className="md:hidden flex shrink-0 items-center justify-between border-b border-gray-300 bg-gray-800 p-4 z-30 sticky top-0 w-[362px]">
         <div
           className="flex items-center gap-2.5 cursor-pointer"
           onClick={() => router.push("/")}
@@ -167,7 +167,7 @@ function AdminSidebarContent() {
         </nav>
 
         <div className="border-t border-slate-800 px-3 py-4 flex items-center gap-3">
-          <div className="h-11 w-11 shrink-0 overflow-hidden rounded-full border border-slate-700 bg-slate-800 shadow-sm">
+          <div className="h-11 w-11 shrink-0 overflow-hidden border border-slate-700 bg-slate-800 shadow-sm">
             {isMounted && user?.profilePhoto ? (
               <Image
                 src={user.profilePhoto}

@@ -15,24 +15,20 @@ export default async function OverviewLayout({
   user,
   children,
 }: OverviewLayoutProps) {
-
-const userProfileResponse =await getProfile();
-if (!userProfileResponse?.payload?.user) {
-  redirect("/login");
-}
-const role = userProfileResponse?.payload?.user?.role as TRole;
-// console.log("role", role);
-
-
+  const userProfileResponse = await getProfile();
+  if (!userProfileResponse?.payload?.user) {
+    redirect("/login");
+  }
+  const role = userProfileResponse?.payload?.user?.role as TRole;
+  // console.log("role", role);
 
   // const session = await getServerSession(authOptions);
   // const role = session?.user.role;
   // console.log("session", session.user);
   const isAdminDashboard =
-    role === USER_ROLES.ADMIN || role === USER_ROLES.OWNER;
+    role === USER_ROLES.ADMIN || role === USER_ROLES.SUPER_ADMIN;
   const dashboard = isAdminDashboard ? admin : user;
 
-  
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       {dashboard}

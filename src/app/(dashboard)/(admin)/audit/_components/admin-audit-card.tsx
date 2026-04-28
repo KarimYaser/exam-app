@@ -130,7 +130,10 @@ export default function AdminAuditCard({
             </DropdownMenuItem>
             {isSuperAdminUser && (
               <DropdownMenuItem
-                onClick={() => onDelete(log.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(log.id);
+                }}
                 className="cursor-pointer text-red-600 focus:text-red-700 focus:bg-red-50"
               >
                 <Trash2 className="mr-2 h-4 w-4" />

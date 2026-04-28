@@ -111,9 +111,11 @@ export default function DashboardSidebar() {
         </div>
         <div className="flex items-start flex-col gap-2.5 px-5 py-5">
           <Image
+            onClick={() => router.push("/")}
             src={elevateLogo}
             alt="Logo"
-            className="text-black bg-black p-1"
+            className="cursor-pointer"
+            style={{ filter: "invert(1) brightness(0.40) sepia(0.05)" }}
           />
 
           <div className="flex items-center gap-2.5 mt-1">
@@ -154,7 +156,7 @@ export default function DashboardSidebar() {
         </nav>
 
         <div className="px-4 py-4 border-t border-gray-100 flex items-center gap-3">
-          <div className="w-12 h-12 overflow-hidden shrink-0 rounded-full border border-gray-100 shadow-sm">
+          <div className="w-12 h-12 overflow-hidden shrink-0  border border-gray-100 shadow-sm">
             {isMounted && user?.profilePhoto ? (
               <Image
                 src={user.profilePhoto}
@@ -198,7 +200,6 @@ export default function DashboardSidebar() {
                   <UserRound className="mr-2 h-4 w-4" />
                   <span>Account</span>
                 </DropdownMenuItem>
-                
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem

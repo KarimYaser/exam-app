@@ -21,6 +21,7 @@ export default function AdminAuditDashboard({
   const [page, setPage] = useState<number>(1);
   const [filtersOpen, setFiltersOpen] = useState<boolean>(true);
   const [showClearModal, setShowClearModal] = useState(false);
+  const [deleteLogId, setDeleteLogId] = useState<string | null>(null);
 
   // Filter states
   const [category, setCategory] = useState<string>("all");
@@ -45,7 +46,7 @@ export default function AdminAuditDashboard({
   const isAlphabeticalSort = sort.startsWith("actorUsername");
   const isClientPagingNeeded = isRoleFiltered || isAlphabeticalSort;
 
-  const { data, isLoading, isError, clearLogs, isClearing, deleteLog } =
+  const { data, isLoading, isError, clearLogs, isClearing, deleteLog, isDeleting } =
     useAdminAuditLogs({
       page: isClientPagingNeeded ? 1 : page,
       limit: isClientPagingNeeded ? 100 : PAGE_SIZE,
@@ -172,10 +173,24 @@ export default function AdminAuditDashboard({
           router={router}
           isSuperAdminUser={isSuperAdminUser}
           sort={sort}
-          onDelete={deleteLog}
+          onDelete={(id) => setDeleteLogId(id)}
           onSortChange={setSort}
         />
       </div>
+
+      <ConfirmDeleteModal
+        open={!!deleteLogId}
+        onCancel={() => setDeleteLogId(null)}
+        onConfirm={async () => {
+          if (deleteLogId) {
+            await deleteLog(deleteLogId);
+            setDeleteLogId(null);
+          }
+        }}
+        isPending={isDeleting}
+        title="Delete Audit Log"
+        description="Are you sure you want to delete this audit log entry? This action cannot be undone."
+      />
       
       <ConfirmDeleteModal
         open={showClearModal}

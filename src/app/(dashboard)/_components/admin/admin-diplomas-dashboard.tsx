@@ -20,7 +20,10 @@ type AdminDiplomaItem = {
   createdAt: string;
 };
 
-function applySort(items: AdminDiplomaItem[], sort: SortKey): AdminDiplomaItem[] {
+function applySort(
+  items: AdminDiplomaItem[],
+  sort: SortKey,
+): AdminDiplomaItem[] {
   const copy = [...items];
   switch (sort) {
     case "title-asc":
@@ -58,7 +61,7 @@ export default function AdminDiplomasDashboard() {
   const [search, setSearch] = useState("");
   const [immutability, setImmutability] = useState<string>("all");
   const [filtersOpen, setFiltersOpen] = useState(true);
-  const [sort, setSort] = useState<SortKey>("title-asc");
+  const [sort, setSort] = useState<SortKey>("newest");
   const router = useRouter();
   const { data, isLoading, isError } = useAdminDiplomasList();
 
@@ -126,12 +129,7 @@ export default function AdminDiplomasDashboard() {
     <div className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-[#f4f5f7] font-mono text-[13px]">
       {/* breadcrumb header */}
       <div className="flex shrink-0 items-center gap-2 border-b border-gray-100 bg-white px-4 py-2 font-mono text-[12px] text-gray-400 sm:px-12">
-        <span
-          className="cursor-pointer text-xs text-blue-500 hover:underline"
-          onClick={() => router.push("/")}
-        >
-          Diplomas
-        </span>
+        <span className="text-xs text-gray-400">Diplomas</span>
       </div>
 
       <AdminDiplomaPaginationBar
