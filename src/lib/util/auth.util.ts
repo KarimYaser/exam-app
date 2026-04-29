@@ -7,12 +7,13 @@ export async function getNextAuthToken() {
   const candidateCookieNames = [
     envCookieName,
     "__Secure-next-auth.session-token",
-    "__Host-next-auth.session-token",
+    "__Host-next-auth.csrf-token",
     "next-auth.session-token",
   ].filter(Boolean) as string[];
   const token = candidateCookieNames
     .map((name) => cookiesStore.get(name)?.value)
     .find(Boolean);
+  console.log("envCookieName", envCookieName);
   // console.log("token", token);
   try {
     const jwt = await decode({
