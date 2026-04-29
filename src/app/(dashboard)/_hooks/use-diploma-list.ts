@@ -34,7 +34,7 @@ export default function useDiplomaList() {
         {};
       const currentPage = meta.page || 1;
       const totalPages = meta.totalPages || 1;
-      console.log(meta);
+      // console.log(meta);
 
       if (currentPage >= totalPages) return undefined;
       return currentPage + 1;

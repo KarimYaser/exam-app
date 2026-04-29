@@ -13,7 +13,7 @@ export async function getNextAuthToken() {
   const token = candidateCookieNames
     .map((name) => cookiesStore.get(name)?.value)
     .find(Boolean);
-  console.log("envCookieName", envCookieName);
+  // console.log("envCookieName", envCookieName);
   // console.log("token", token);
   try {
     const jwt = await decode({
