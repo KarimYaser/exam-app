@@ -212,7 +212,7 @@ export async function deleteQuestionById(
 
 export async function submitExamAnswers(
   examId: string,
-  answers: Record<string, string>,
+  answers: Record<string, string | null>,
   startedAt: string,
 ): Promise<SubmissionDetailsResponse> {
   const jwt = await getNextAuthToken();
@@ -229,13 +229,13 @@ export async function submitExamAnswers(
     if (!baseUrl) {
       throw new Error("API URL not configured.");
     }
-
-    const normalizedAnswers = Object.entries(answers).map(
-      ([questionId, answerId]) => ({
+// entry is [questionId, answerId], filter out unanswered and convert to array of { questionId, answerId }
+    const normalizedAnswers = Object.entries(answers)
+      .filter((entry): entry is [string, string] => Boolean(entry[1]))
+      .map(([questionId, answerId]) => ({
         questionId,
         answerId,
-      }),
-    );
+      }));
 
     const payload: SubmitExamRequest = {
       examId,
@@ -243,11 +243,11 @@ export async function submitExamAnswers(
       startedAt,
     };
 
-    console.log("Submitting exam with payload:", {
-      examId,
-      answers: normalizedAnswers,
-      startedAt,
-    });
+    // console.log("Submitting exam with payload:", {
+    //   examId,
+    //   answers: normalizedAnswers,
+    //   startedAt,
+    // });
 
     const response = await fetch(`${baseUrl}/submissions`, {
       method: "POST",
@@ -258,8 +258,9 @@ export async function submitExamAnswers(
       body: JSON.stringify(payload),
     });
 
-    const responseData = await response.json().catch(() => ({}));
-
+    const responseData = await response.json().catch(() => ({})); /* catch helps to handle JSON parse errors */
+    // const responseData = await response.json();
+// console.log(responseData);
     if (!response.ok) {
       const errorMessage =
         responseData?.message ||

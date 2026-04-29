@@ -141,7 +141,8 @@ export interface SubmissionDetailsResponse {
 export interface SubmitExamRequest {
   examId: string;
   answers: {
-    [questionId: string]: string;
-  };
+    questionId: string;
+    answerId?: string | null;
+  }[];
   startedAt: string;
 }

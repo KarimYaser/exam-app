@@ -1,5 +1,5 @@
 import React from "react";
-import { getExamQuestions } from "@/app/(dashboard)/(admin)/exams/[id]/questions/_actions/questions.actions";
+import { getExams } from "@/app/(dashboard)/[id]/_actions/exams.actions";
 import ExamQuestions from "./_components/exam-questions";
 import isAdmin from "@/lib/util/is-admin";
 import isSuperAdmin from "@/lib/util/is-super-admin";
@@ -24,6 +24,9 @@ export default async function ExamSessionPage({
   const resolvedSearchParams = await searchParams;
   const { id: diplomaId, examId } = resolvedParams;
   const { diplomaName = "Diploma", examName = "Exam" } = resolvedSearchParams;
+  const examsResponse = await getExams(diplomaId);
+  const exam = examsResponse?.payload?.data?.find((item) => item.id === examId);
+  const durationMinutes = exam?.duration;
   const isAdminUser = await isAdmin();
   const isSuperAdminUser = await isSuperAdmin();
   if (!isAdminUser && !isSuperAdminUser) {
@@ -33,6 +36,7 @@ export default async function ExamSessionPage({
         diplomaId={diplomaId}
         diplomaName={decodeURIComponent(diplomaName)}
         examName={decodeURIComponent(examName)}
+        examDurationMinutes={durationMinutes}
       />
     );
   }

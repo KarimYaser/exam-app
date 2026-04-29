@@ -37,6 +37,13 @@ export default function ExamResults({
   const total = analytics.length || 1;
   const correct = analytics.filter((item) => item.isCorrect).length;
   const incorrect = total - correct;
+  // make qustions be displayed in order
+  const analyticsById = new Map(
+    analytics.map((item) => [item.questionId, item]),
+  );
+  const orderedQuestions = [...questions].sort(
+    (a, b) => a.order - b.order,
+  );
 
   return (
     <div className="w-full h-full min-h-0 flex flex-col bg-gray-50 overflow-y-auto">
@@ -90,82 +97,108 @@ export default function ExamResults({
           </div>
 
           <div className="border border-dashed border-[#C7D1DF] bg-white p-4 space-y-4 max-h-130 overflow-y-auto">
-            {analytics.map((item: SubmissionAnalyticsItem, idx: number) => (
-              <div key={item.questionId || idx} className="space-y-2">
-                <h3 className="text-3xl font-bold text-[#155DFC] font-mono">
-                  {item.questionText}
-                </h3>
-                {(() => {
-                  const question = questions.find(
-                    (q) => q.id === item.questionId,
-                  );
-                  const options: Answer[] = question?.answers || [];
-                  const selectedAnswerId = item.selectedAnswer?.id;
-                  const correctAnswerId = item.correctAnswer?.id;
+            {orderedQuestions.map((question, idx) => {
+              const item = analyticsById.get(question.id);
+              const options: Answer[] = [...question.answers].sort(
+                (a, b) => a.order - b.order,
+              );
+              const selectedAnswerId = item?.selectedAnswer?.id;
+              const correctAnswerId =
+                item?.correctAnswer?.id || question.correctAnswerId;
+              const questionText = item?.questionText || question.text;
+              const isUnanswered = !selectedAnswerId;
 
-                  if (options.length === 0) {
-                    return (
-                      <>
-                        <div className="p-3 bg-red-50/70 border border-red-100 text-gray-700 font-mono text-lg flex items-center gap-3">
-                          <span className="inline-flex items-center justify-center w-5 h-5 aspect-square shrink-0 rounded-full border-2 border-red-500">
-                            <span className="w-4 h-4 rounded-full bg-red-600" />
-                          </span>
-                          {item.selectedAnswer?.text || "No answer selected"}
-                        </div>
+              const selectedAnswerText =
+                item?.selectedAnswer?.text ||
+                options.find((opt) => opt.id === selectedAnswerId)?.text ||
+                "No answer selected";
+              const correctAnswerText =
+                item?.correctAnswer?.text ||
+                options.find((opt) => opt.id === correctAnswerId)?.text ||
+                "";
 
+              return (
+                <div
+                  key={question.id || idx}
+                  className={`space-y-2 rounded-lg border p-4 ${
+                    isUnanswered
+                      ? "bg-yellow-50/70 border-yellow-200"
+                      : "bg-white border-transparent"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="text-3xl font-bold text-[#155DFC] font-mono">
+                      {questionText}
+                    </h3>
+                    {isUnanswered && (
+                      <span className="shrink-0 rounded-full border border-yellow-300 bg-yellow-100 px-2 py-1 text-[10px] font-bold font-mono uppercase text-yellow-800">
+                        Unanswered
+                      </span>
+                    )}
+                  </div>
+                  {options.length === 0 ? (
+                    <>
+                      <div className="p-3 bg-red-50/70 border border-red-100 text-gray-700 font-mono text-lg flex items-center gap-3">
+                        <span className="inline-flex items-center justify-center w-5 h-5 aspect-square shrink-0 rounded-full border-2 border-red-500">
+                          <span className="w-4 h-4 rounded-full bg-red-600" />
+                        </span>
+                        {selectedAnswerText}
+                      </div>
+
+                      {correctAnswerText && (
                         <div className="p-3 bg-emerald-50/70 border border-emerald-100 text-gray-700 font-mono text-lg flex items-center gap-3">
                           <span className="inline-flex items-center justify-center w-5 h-5 aspect-square shrink-0 rounded-full border-2 border-emerald-500">
                             <span className="w-4 h-4 rounded-full bg-emerald-500" />
                           </span>
-                          {item.correctAnswer?.text}
+                          {correctAnswerText}
                         </div>
-                      </>
-                    );
-                  }
+                      )}
+                    </>
+                  ) : (
+                    options.map((option) => {
+                      const isCorrectOption = option.id === correctAnswerId;
+                      const isChosenWrong =
+                        option.id === selectedAnswerId &&
+                        selectedAnswerId !== correctAnswerId;
 
-                  return options.map((option) => {
-                    const isCorrectOption = option.id === correctAnswerId;
-                    const isChosenWrong =
-                      option.id === selectedAnswerId &&
-                      selectedAnswerId !== correctAnswerId;
+                      const rowClass = isCorrectOption
+                        ? "bg-emerald-50/70 border-emerald-100"
+                        : isChosenWrong
+                          ? "bg-red-50/70 border-red-100"
+                          : "bg-gray-50 border-gray-100";
 
-                    const rowClass = isCorrectOption
-                      ? "bg-emerald-50/70 border-emerald-100"
-                      : isChosenWrong
-                        ? "bg-red-50/70 border-red-100"
-                        : "bg-gray-50 border-gray-100";
+                      const ringClass = isCorrectOption
+                        ? "border-emerald-500"
+                        : isChosenWrong
+                          ? "border-red-500"
+                          : "border-gray-300";
 
-                    const ringClass = isCorrectOption
-                      ? "border-emerald-500"
-                      : isChosenWrong
-                        ? "border-red-500"
-                        : "border-gray-300";
+                      const dotClass = isCorrectOption
+                        ? "bg-emerald-500"
+                        : isChosenWrong
+                          ? "bg-red-500"
+                          : "bg-transparent";
 
-                    const dotClass = isCorrectOption
-                      ? "bg-emerald-500"
-                      : isChosenWrong
-                        ? "bg-red-500"
-                        : "bg-transparent";
-
-                    return (
-                      <div
-                        key={option.id}
-                        className={`p-3 border text-gray-700 font-mono text-lg flex items-center gap-3 ${rowClass}`}
-                      >
-                        <span
-                          className={`inline-flex items-center justify-center w-5 h-5 aspect-square shrink-0 rounded-full border-2 ${ringClass}`}
+                      return (
+                        <div
+                          key={option.id}
+                          className={`p-3 border text-gray-700 font-mono text-lg flex items-center gap-3 ${rowClass}`}
                         >
                           <span
-                            className={`w-2 h-2 rounded-full ${dotClass}`}
-                          />
-                        </span>
-                        {option.text}
-                      </div>
-                    );
-                  });
-                })()}
-              </div>
-            ))}
+                            className={`inline-flex items-center justify-center w-5 h-5 aspect-square shrink-0 rounded-full border-2 ${ringClass}`}
+                          >
+                            <span
+                              className={`w-2 h-2 rounded-full ${dotClass}`}
+                            />
+                          </span>
+                          {option.text}
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 

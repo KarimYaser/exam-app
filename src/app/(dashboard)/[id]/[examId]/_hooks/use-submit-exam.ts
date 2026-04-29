@@ -16,7 +16,7 @@ export function useSubmitExam() {
       startedAt,
     }: {
       examId: string;
-      answers: Record<string, string>;
+      answers: Record<string, string | null>;
       startedAt: string;
     }) => {
       // Call server action to submit answers

@@ -12,7 +12,7 @@ export default function useExamSession(examId: string, initialQuestions: Questio
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   // Store user answers as { questionId: answerId }
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [answers, setAnswers] = useState<Record<string, string | null>>({});
 
   // Track when exam started
   const [startedAt, setStartedAt] = useState<string>(new Date().toISOString());
@@ -21,8 +21,7 @@ export default function useExamSession(examId: string, initialQuestions: Questio
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submissionId, setSubmissionId] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submissionData, setSubmissionData] =
-    useState<SubmissionDetailsResponse | null>(null);
+  const [submissionData, setSubmissionData] =    useState<SubmissionDetailsResponse | null>(null);
 
   // useMutation hook for submitting answers
   const { mutate: submitAnswersMutation, isPending: isSubmitting } = useSubmitExam();
@@ -62,8 +61,10 @@ export default function useExamSession(examId: string, initialQuestions: Questio
    * Submit exam answers to the server using mutation
    */
   const handleSubmit = async () => {
+    if (isSubmitting || isSubmitted) {
+      return;
+    }
     setSubmitError(null);
-
     // Call mutation which triggers server action
     submitAnswersMutation(
       {
@@ -124,6 +125,7 @@ export default function useExamSession(examId: string, initialQuestions: Questio
 
     // Submission
     handleSubmit,
+    handleTimeUp: handleSubmit,
     isSubmitting,
     isSubmitted,
     submitError,

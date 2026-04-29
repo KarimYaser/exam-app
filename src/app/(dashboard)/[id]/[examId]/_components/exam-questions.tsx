@@ -13,9 +13,16 @@ interface ExamQuestionsProps {
   diplomaId: string;
   diplomaName: string;
   examName: string;
+  examDurationMinutes?: number;
 }
 
-export default function ExamQuestions({ examId, diplomaId, diplomaName, examName }: ExamQuestionsProps) {
+export default function ExamQuestions({
+  examId,
+  diplomaId,
+  diplomaName,
+  examName,
+  examDurationMinutes,
+}: ExamQuestionsProps) {
   
   // State for retry mechanism
   const [retryCount, setRetryCount] = useState(0);
@@ -27,7 +34,7 @@ export default function ExamQuestions({ examId, diplomaId, diplomaName, examName
 
   // Extract questions from the response payload
   const questions = data?.payload?.data || data?.payload?.questions || [];
-
+  const durationMinutes = examDurationMinutes ?? 20;
   // Manage exam session state - MUST be called before early returns
   const {
     currentQuestion,
@@ -46,6 +53,7 @@ export default function ExamQuestions({ examId, diplomaId, diplomaName, examName
     submitError,
     answers,
     handleRestart,
+    handleTimeUp,
   } = useExamSession(examId, questions);
 
   // All hooks must be called above. Now we can safely use early returns.
@@ -103,12 +111,7 @@ export default function ExamQuestions({ examId, diplomaId, diplomaName, examName
   };
 
   const handleFinishClick = () => {
-    if (!allQuestionsAnswered) {
-      setHasTriedFinish(true);
-      return;
-    }
-
-    setHasTriedFinish(false);
+    setHasTriedFinish(!allQuestionsAnswered);
     handleSubmit();
   };
 
@@ -168,7 +171,7 @@ export default function ExamQuestions({ examId, diplomaId, diplomaName, examName
 
               {/* Timer component */}
               <div className="shrink-0">
-                <CircularTimer durationMinutes={20} />
+                <CircularTimer durationMinutes={durationMinutes} onTimeUp={handleTimeUp} />
               </div>
             </div>
           </div>
@@ -243,12 +246,6 @@ export default function ExamQuestions({ examId, diplomaId, diplomaName, examName
                 <RotateCcw size={14} />
                 Retry Submission {retryCount > 0 && `(${retryCount})`}
               </button>
-            </div>
-          )}
-          {/* Show unanswered questions warning on last question */}
-          {currentQuestionIndex === totalQuestions - 1 && hasTriedFinish && !allQuestionsAnswered && (
-            <div className="mt-3 p-3 bg-yellow-50 border border-yellow-300 rounded text-yellow-700 text-xs md:text-sm font-mono">
-              ⚠️ You have {unansweredCount} unanswered {unansweredCount === 1 ? "question" : "questions"}. Please answer all questions before submitting.
             </div>
           )}
         </div>

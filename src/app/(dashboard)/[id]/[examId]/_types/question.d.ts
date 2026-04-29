@@ -39,7 +39,7 @@ export interface QuestionsListResponse {
 // ============= SUBMISSION ENTITY =============
 export interface SubmissionAnswer {
   questionId: string;
-  answerId: string;
+  answerId?: string | null;
 }
 
 export interface SubmissionAnalyticsItem {

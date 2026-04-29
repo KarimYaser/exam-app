@@ -1,14 +1,16 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface CircularTimerProps {
   durationMinutes: number;
+  onTimeUp?: () => void;
 }
 
-export default function CircularTimer({ durationMinutes }: CircularTimerProps) {
+export default function CircularTimer({ durationMinutes, onTimeUp }: CircularTimerProps) {
   const [timeLeft, setTimeLeft] = useState(durationMinutes * 60);
-  
+  const hasFiredRef = useRef(false);
+  // Start timer on mount
   useEffect(() => {
     if (timeLeft <= 0) return;
     
@@ -18,6 +20,12 @@ export default function CircularTimer({ durationMinutes }: CircularTimerProps) {
     
     return () => clearInterval(timer);
   }, [timeLeft]);
+// Ensure onTimeUp is called only once when time runs out
+  useEffect(() => {
+    if (timeLeft > 0 || hasFiredRef.current) return;
+    hasFiredRef.current = true;
+    onTimeUp?.();
+  }, [onTimeUp, timeLeft]);
 
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
