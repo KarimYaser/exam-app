@@ -69,6 +69,32 @@ export default function AdminAuditDetails({
   };
 
   const updatedFields = log.metadata?.keys || null;
+  const metadata = log.metadata || {};
+  const examId = metadata.examId || metadata.exam?.id || metadata.exam_id;
+  const diplomaId =
+    metadata.diplomaId || metadata.diploma?.id || metadata.diploma_id;
+  const entityType = (log.entityType || "").toLowerCase();
+  const entityHref = (() => {
+    switch (entityType) {
+      case "exam":
+        return log.entityId ? `/exams/${log.entityId}` : null;
+      case "question":
+        return examId ? `/exams/${examId}/questions/${log.entityId}` : null;
+      case "diploma":
+        return log.entityId ? `/${log.entityId}` : null;
+      case "submission":
+      case "examresult":
+      case "exam_result":
+        if (diplomaId && examId) {
+          return `/${diplomaId}/${examId}`;
+        }
+        return examId ? `/exams/${examId}` : null;
+      case "user":
+        return "/settings";
+      default:
+        return null;
+    }
+  })();
   // console.log(log);
   // console.log(log.metadata.keys);
 
@@ -93,10 +119,19 @@ export default function AdminAuditDetails({
           </h1>
           <div className="flex items-center gap-1">
             <span className="text-[14px] text-gray-400">Entity:</span>
-            <span className="capitalize text-[14px] text-gray-400 underline">
-              {log.entityType} [{log.entityId}]
-            </span>
-            <ExternalLink className="h-3 w-3 text-gray-400" />
+            {entityHref ? (
+              <Link
+                href={entityHref}
+                className="capitalize text-[14px] text-gray-400 underline"
+              >
+                {log.entityType} [{log.entityId}]
+              </Link>
+            ) : (
+              <span className="capitalize text-[14px] text-gray-400">
+                {log.entityType} [{log.entityId}]
+              </span>
+            )}
+            {entityHref && <ExternalLink className="h-3 w-3 text-gray-400" />}
           </div>
         </div>
         {isSuperAdminUser && (
@@ -177,10 +212,19 @@ export default function AdminAuditDetails({
               <p className="text-gray-800 font-bold text-[14px] capitalize">
                 {log.entityType}:
               </p>
-              <p className="text-gray-800 font-bold text-[14px]">
-                {log.entityId}
-              </p>
-              <ExternalLink className="h-3 w-3 text-gray-800" />
+              {entityHref ? (
+                <Link
+                  href={entityHref}
+                  className="text-gray-800 font-bold text-[14px] underline"
+                >
+                  {log.entityId}
+                </Link>
+              ) : (
+                <p className="text-gray-800 font-bold text-[14px]">
+                  {log.entityId}
+                </p>
+              )}
+              {entityHref && <ExternalLink className="h-3 w-3 text-gray-800" />}
             </div>
           </div>
 
