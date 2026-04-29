@@ -14,7 +14,7 @@ export default function AdminExamInfo({
   questionsCount,
 }: AdminExamInfoProps) {
   return (
-    <div className="mb-4 rounded border border-gray-200 bg-white p-4 sm:p-4 max-h-[646px] overflow-y-scroll">
+    <div className="mb-4 rounded border border-gray-200 bg-white p-4 sm:p-4 max-h-[646px] overflow-y-auto">
       <div className="mb-1 text-[14px] font-medium text-gray-400">Image</div>
       <div className="relative mb-4 h-[300px]  lg:max-w-[300px] sm:w-full overflow-hidden border border-gray-200 bg-gray-50 sm:h-60 sm:w-55">
         {exam.image ? (
