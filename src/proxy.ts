@@ -56,6 +56,16 @@ export default async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 const isAdminUser = await isAdmin();
 
+  if (authRoutes.has(pathname)) {
+    if (!jwt) return NextResponse.next(); /* auth route without token => go */
+
+    const redirectUrl = new URL(
+      "/",
+      request.nextUrl.origin,
+    ); /* auth route with token => go to home */
+    return NextResponse.redirect(redirectUrl);
+  }
+
   // User cannot access private routes without authentication
   // User cannot access auth routes if they are authenticated
   // const privateRoutes = isAdminUser ? adminPrivateRoutes : userPrivateRoutes;
@@ -67,16 +77,6 @@ const isAdminUser = await isAdmin();
 
     redirectUrl.searchParams.set("callbackUrl", pathname);
 
-    return NextResponse.redirect(redirectUrl);
-  }
-
-  if (authRoutes.has(pathname)) {
-    if (!jwt) return NextResponse.next(); /* auth route without token => go */
-
-    const redirectUrl = new URL(
-      "/",
-      request.nextUrl.origin,
-    ); /* auth route with token => go to home */
     return NextResponse.redirect(redirectUrl);
   }
 
