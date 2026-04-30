@@ -76,7 +76,7 @@ function AdminSidebarContent() {
 
   return (
     <>
-      <div className="md:hidden flex shrink-0 items-center justify-between border-b border-gray-300 bg-gray-800 p-4 z-30 sticky top-0 w-[362px]">
+      <div className="md:hidden flex flex-shrink-0 items-center justify-between border-b border-gray-300 bg-gray-800 p-4 z-30 sticky top-0">
         <div
           className="flex items-center gap-2.5 cursor-pointer"
           onClick={() => router.push("/")}
@@ -105,11 +105,11 @@ function AdminSidebarContent() {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-56 transform border-r border-gray-300 bg-gray-800 flex flex-col h-full min-h-screen transition-transform duration-300 ease-in-out md:translate-x-0 md:sticky md:top-0 font-mono ${
+        className={`fixed inset-y-0 left-0 z-50 w-70 transform border-r border-gray-300 bg-gray-800 flex flex-col h-full min-h-screen transition-transform duration-300 ease-in-out md:translate-x-0 md:sticky md:top-0 font-mono ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="md:hidden flex justify-end p-3">
+        <div className="md:hidden flex justify-end p-4">
           <button
             type="button"
             onClick={() => setIsOpen(false)}
@@ -119,26 +119,25 @@ function AdminSidebarContent() {
           </button>
         </div>
 
-        <div className="flex flex-col gap-3 p-5">
+        <div className="flex items-start flex-col gap-2.5 px-5 py-5">
           <Image
             src={elevateLogo}
             alt="Elevate"
-            className="mt-1 max-h-8 w-auto object-contain opacity-90 cursor-pointer"
-            width={120}
-            height={32}
+            className="cursor-pointer"
             onClick={() => {
               router.push("/");
               setIsOpen(false);
             }}
           />
-          <div className="flex items-center gap-2 ml-2.5">
-            {/* <Image src={logo} alt="Logo" width={26} height={26} className="invert opacity-90" /> */}
+          <div className="flex items-center gap-2.5 mt-1">
             <FolderCode size={25} className="text-slate-300 bg-transparent" />
-            <span className="text-sm font-medium text-slate-300">Exam App</span>
+            <span className="text-xs font-semibold text-slate-300">
+              Exam App
+            </span>
           </div>
         </div>
 
-        <nav className="flex-1 px-3 py-4 flex flex-col gap-1">
+        <nav className="flex-1 px-6 py-4 flex flex-col gap-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive =
@@ -166,7 +165,7 @@ function AdminSidebarContent() {
           })}
         </nav>
 
-        <div className="border-t border-slate-800 px-3 py-4 flex items-center gap-3">
+        <div className="border-t border-slate-800 px-6 py-4 flex items-center gap-3">
           <div className="h-11 w-11 shrink-0 overflow-hidden border border-slate-700 bg-slate-800 shadow-sm">
             {isMounted && user?.profilePhoto ? (
               <Image

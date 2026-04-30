@@ -97,7 +97,7 @@ export default function DashboardSidebar() {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-56 transform bg-blue-50 border-r border-gray-200 flex flex-col h-full min-h-screen transition-transform duration-300 ease-in-out md:translate-x-0 md:sticky md:top-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-70 transform bg-blue-50 border-r border-gray-200 flex flex-col h-full min-h-screen transition-transform duration-300 ease-in-out md:translate-x-0 md:sticky md:top-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -126,7 +126,7 @@ export default function DashboardSidebar() {
           </div>
         </div>
 
-        <nav className="flex-1 px-3 py-4 flex flex-col gap-1">
+        <nav className="flex-1 px-6 py-4 flex flex-col gap-1">
           {navItems.map((item) => {
             const isActive =
               item.href === "/"
@@ -155,7 +155,7 @@ export default function DashboardSidebar() {
           })}
         </nav>
 
-        <div className="px-4 py-4 border-t border-gray-100 flex items-center gap-3">
+        <div className="px-6 py-4 border-t border-gray-100 flex items-center gap-3">
           <div className="w-12 h-12 overflow-hidden shrink-0  border border-gray-100 shadow-sm">
             {isMounted && user?.profilePhoto ? (
               <Image
